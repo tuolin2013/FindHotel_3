@@ -20,8 +20,8 @@
 
         <ImageView
             android:id="@+id/iv_arrow"
-            android:layout_width="36sp"
-            android:layout_height="36sp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_gravity="center"
             android:src="@drawable/icon_down" />
 
@@ -33,7 +33,7 @@
             android:layout_marginLeft="10sp"
             android:text="TextView"
             android:textColor="#ff7500"
-            android:textSize="33sp" />
+            android:textSize="24sp" />
     </LinearLayout>
 
     <LinearLayout

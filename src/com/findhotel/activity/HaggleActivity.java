@@ -12,16 +12,26 @@ import com.findhotel.util.ExitApplication;
 import com.findhotel.util.MyActionMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class HaggleActivity extends SherlockActivity {
 	SlidingMenu menu;
 	JSONObject hotel;
 	TextView titleText;
+	String[] roomType = { "Ë«´²·¿", "´ó´²·¿" };
+	ArrayAdapter<String> typeAdapter;
+	Spinner typeSpinner;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +66,23 @@ public class HaggleActivity extends SherlockActivity {
 
 	void initView() {
 		titleText = (TextView) findViewById(R.id.tv_titel);
+		typeSpinner = (Spinner) findViewById(R.id.sp_type);
+		typeAdapter = new ArrayAdapter<String>(HaggleActivity.this, android.R.layout.simple_spinner_item, roomType);
+		typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		typeSpinner.setAdapter(typeAdapter);
+		typeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 		try {
 			hotel = new JSONObject(getIntent().getStringExtra("hotel"));
 
@@ -64,6 +91,18 @@ public class HaggleActivity extends SherlockActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		// test
+		((Button) findViewById(R.id.btn_haggle)).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(HaggleActivity.this, HaggleAnswerActivity.class);
+				startActivity(intent);
+
+			}
+		});
 
 	}
 

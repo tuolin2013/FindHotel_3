@@ -60,7 +60,7 @@ public class RoomListActivity extends SherlockActivity {
 	TextView addressText, check_in_dateText, check_in_dayText, check_out_dateText, check_out_dayText;
 	Button haggleButton;
 	LinearLayout addressLayout;
-	LinearLayout facilityIconView;
+	LinearLayout facilityIconView, facilityView;
 	private PopupWindow mPopupWindow;
 	RoomAdapter mAdapter;
 	Context mContext = RoomListActivity.this;
@@ -255,6 +255,18 @@ public class RoomListActivity extends SherlockActivity {
 
 			}
 		});
+
+		findViewById(R.id.ll_facility).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(RoomListActivity.this, HotelDetailsActivity.class);
+				intent.putExtra("hotel", hotel.toString());
+				startActivity(intent);
+
+			}
+		});
 		displayHotelDetails();
 		loadTestData();
 	}
@@ -368,17 +380,6 @@ public class RoomListActivity extends SherlockActivity {
 				img.setLayoutParams(layoutParams);
 				facilityIconView.addView(img);
 			}
-			facilityIconView.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					Intent intent = new Intent(RoomListActivity.this, HotelDetailsActivity.class);
-					intent.putExtra("hotel", hotel.toString());
-					startActivity(intent);
-
-				}
-			});
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

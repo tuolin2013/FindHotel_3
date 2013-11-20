@@ -30,9 +30,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TableLayout;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TableLayout.LayoutParams;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -40,11 +44,11 @@ import android.widget.TextView;
 public class CheckInInfoActivity extends SherlockActivity {
 	SlidingMenu menu;
 	Button nextButton, exchangeButton;
+	Spinner numSpinner;
 	TextView hotelNameText, hotelAreaText, roomTypeText, dateText;
 	Context mContext = CheckInInfoActivity.this;
 	List<EditText> editTexts;
 	TableLayout tableLayout;
-	EditText room_numText;
 	JSONObject hotel, room;
 	String check_in_day, check_out_day;
 
@@ -100,29 +104,29 @@ public class CheckInInfoActivity extends SherlockActivity {
 		});
 
 		tableLayout = (TableLayout) findViewById(R.id.tab_check_in);
-		room_numText = (EditText) findViewById(R.id.etv_room_num);
-		room_numText.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
-				int num = Integer.parseInt(room_numText.getText().toString());
-				addRow(num);
-
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+		// room_numText = (EditText) findViewById(R.id.etv_room_num);
+		// room_numText.addTextChangedListener(new TextWatcher() {
+		//
+		// @Override
+		// public void onTextChanged(CharSequence s, int start, int before, int count) {
+		// // TODO Auto-generated method stub
+		// int num = Integer.parseInt(room_numText.getText().toString());
+		// addRow(num);
+		//
+		// }
+		//
+		// @Override
+		// public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		//
+		// @Override
+		// public void afterTextChanged(Editable s) {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		// });
 
 		nextButton = (Button) findViewById(R.id.btn_next);
 		nextButton.setOnClickListener(new OnClickListener() {
@@ -135,6 +139,29 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 			}
 		});
+
+		addRow(1);
+		numSpinner = (Spinner) findViewById(R.id.sp_room_num);
+		String[] nums = { "1", "2", "3", "4", "5" };
+		ArrayAdapter<String> numAdapter = new ArrayAdapter<String>(CheckInInfoActivity.this, android.R.layout.simple_spinner_item, nums);
+		numAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		numSpinner.setAdapter(numAdapter);
+		numSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				addRow(arg2 + 1);
+
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
 	}
 
 	void initActionBar() {

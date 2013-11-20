@@ -12,133 +12,178 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center|left" >
-
-            <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="36sp"
-                android:layout_height="36sp"
-                android:src="@drawable/about_navigation" />
+            android:background="#fefce3"
+            android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_titel"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:text="TextView" />
+                android:layout_margin="5sp"
+                android:text="有3个"
+                android:textColor="#ff9236"
+                android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="100sp"
-                android:layout_height="wrap_content"
-                android:text="发飙价" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="50sp"
-                android:layout_height="wrap_content"
-                android:text="180" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#ffca9c"
+                android:layerType="software" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center|left" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.1"
-                android:text="入住" />
+            android:layout_margin="10dp"
+            android:background="@drawable/card_border_round_corner"
+            android:orientation="vertical" >
 
             <LinearLayout
-                android:id="@+id/ll_check_in_date"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:background="@drawable/custom_view_click"
-                android:clickable="true"
-                android:orientation="vertical" >
+                android:gravity="center|left" >
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="36sp"
+                    android:layout_height="36sp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/about_navigation" />
 
                 <TextView
-                    android:id="@+id/tv_check_in_date"
+                    android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="09月30日"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:layout_weight="0.3"
+                    android:text="TextView" />
 
                 <TextView
-                    android:id="@+id/tv_check_in_day"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/textView2"
+                    android:layout_width="100sp"
                     android:layout_height="wrap_content"
-                    android:text="13年，星期五" />
+                    android:text="发飙价" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="50sp"
+                    android:layout_height="wrap_content"
+                    android:text="180" />
             </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.1"
-                android:text="离店" />
 
             <LinearLayout
-                android:id="@+id/ll_check_out_date"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.3"
-                android:background="@drawable/custom_view_click"
-                android:clickable="true"
-                android:orientation="vertical" >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|left" >
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="36sp"
+                    android:layout_height="36sp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/icon_b_calendar" />
 
                 <TextView
-                    android:id="@+id/tv_check_out_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="09月30日"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:layout_weight="0.1"
+                    android:text="入住" />
+
+                <LinearLayout
+                    android:id="@+id/ll_check_in_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:background="@drawable/custom_view_click"
+                    android:clickable="true"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/tv_check_in_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="09月30日"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_check_in_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="13年，星期五"
+                        android:textColor="#7d7d7d"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/tv_check_out_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="13年，星期五" />
+                    android:layout_weight="0.1"
+                    android:text="离店" />
+
+                <LinearLayout
+                    android:id="@+id/ll_check_out_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:background="@drawable/custom_view_click"
+                    android:clickable="true"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/tv_check_out_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="09月30日"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_check_out_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="13年，星期五"
+                        android:textColor="#7d7d7d"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/arrow" />
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/arrow" />
-        </LinearLayout>
+                android:gravity="center|left" >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|left" >
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="36sp"
+                    android:layout_height="36sp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/icon_singleroom" />
 
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="36sp"
-                android:layout_height="36sp"
-                android:src="@drawable/icon_singleroom" />
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="100sp"
+                    android:layout_height="wrap_content"
+                    android:text="大床" />
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="100sp"
-                android:layout_height="wrap_content"
-                android:text="大床" />
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1间" />
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1间" />
+            </LinearLayout>
         </LinearLayout>
 
         <ListView
-            android:id="@+id/listView1"
+            android:id="@+id/lv_answer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/card_border_round_corner" >
         </ListView>
     </LinearLayout>
 
@@ -150,22 +195,24 @@
         <Button
             android:id="@+id/button1"
             android:layout_width="wrap_content"
-            android:layout_height="30sp"
+            android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:layout_weight="0.5"
             android:background="@drawable/custom_btn_green"
-            android:text="支付"
-            android:textColor="#FFFFFF" />
+            android:text="支 付"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
 
         <Button
             android:id="@+id/button2"
             android:layout_width="wrap_content"
-            android:layout_height="30sp"
+            android:layout_height="wrap_content"
             android:layout_margin="5sp"
             android:layout_weight="0.5"
             android:background="@drawable/custom_btn_orange"
             android:text="全部回绝"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
     </LinearLayout>
 
 </RelativeLayout>

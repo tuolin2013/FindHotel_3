@@ -105,21 +105,11 @@
                     android:text="房间数"
                     android:textSize="18sp" />
 
-                <EditText
-                    android:id="@+id/etv_room_num"
-                    android:layout_width="40dp"
-                    android:layout_height="40sp"
-                    android:layout_weight="0.5"
-                    android:background="@null"
-                    android:text="1" />
-
-                <ImageView
-                    android:id="@+id/imageView3"
+                <Spinner
+                    android:id="@+id/sp_room_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center|right"
-                    android:layout_weight="0.1"
-                    android:src="@drawable/arrow" />
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <View
@@ -252,6 +242,7 @@
                     android:id="@+id/imageView1"
                     android:layout_width="48sp"
                     android:layout_height="48sp"
+                    android:layout_gravity="center"
                     android:src="@drawable/coupon_10" />
 
                 <LinearLayout
@@ -265,8 +256,8 @@
 
                     <ImageView
                         android:id="@+id/imageView1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="48sp"
+                        android:layout_height="48sp"
                         android:layout_gravity="center"
                         android:background="@drawable/minus_selector"
                         android:clickable="true"
@@ -275,7 +266,7 @@
                     <EditText
                         android:id="@+id/editText1"
                         android:layout_width="wrap_content"
-                        android:layout_height="45sp"
+                        android:layout_height="48sp"
                         android:background="@null"
                         android:text="18张"
                         android:textSize="24sp" >
@@ -283,23 +274,30 @@
 
                     <ImageView
                         android:id="@+id/imageView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="48sp"
+                        android:layout_height="48sp"
                         android:layout_gravity="center"
                         android:background="@drawable/plus_selector"
                         android:clickable="true"
                         android:src="@drawable/icon_plus" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5" >
+                </LinearLayout>
+
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center|right" >
+                    android:layout_gravity="center|right"
+                    android:layout_margin="15sp" >
 
                     <Button
                         android:id="@+id/btn_exchange"
                         android:layout_width="80sp"
-                        android:layout_height="40sp"
+                        android:layout_height="48sp"
                         android:background="@drawable/custom_btn_green"
                         android:textColor="#FFFFFF" />
 

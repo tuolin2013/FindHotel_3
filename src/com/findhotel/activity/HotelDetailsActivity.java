@@ -43,7 +43,13 @@ public class HotelDetailsActivity extends SherlockActivity {
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		finish();
+		String selected = (String) item.getTitle();
+		if ("¸ü¶à".equals(selected)) {
+			menu.toggle();
+
+		} else {
+			finish();
+		}
 		return false;
 	}
 
