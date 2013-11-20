@@ -221,7 +221,7 @@
             android:layout_width="fill_parent"
             android:layout_height="1px"
             android:layout_marginTop="10sp"
-            android:background="#c0c0c0"
+            android:background="#e5e5e5"
             android:layerType="software" />
 
         <TableLayout

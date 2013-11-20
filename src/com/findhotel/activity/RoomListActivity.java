@@ -368,6 +368,17 @@ public class RoomListActivity extends SherlockActivity {
 				img.setLayoutParams(layoutParams);
 				facilityIconView.addView(img);
 			}
+			facilityIconView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					Intent intent = new Intent(RoomListActivity.this, HotelDetailsActivity.class);
+					intent.putExtra("hotel", hotel.toString());
+					startActivity(intent);
+
+				}
+			});
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

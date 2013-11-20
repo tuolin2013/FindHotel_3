@@ -1,7 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:padding="10dp" >
 
     <ScrollView
         android:id="@+id/scrollView1"
@@ -36,7 +38,16 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textColor="#7d7d7d"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1sp"
+                android:layout_marginBottom="10sp"
+                android:layout_marginTop="10sp"
+                android:background="#e5e5e5" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -61,7 +72,16 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textColor="#7d7d7d"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1sp"
+                android:layout_marginBottom="10sp"
+                android:layout_marginTop="10sp"
+                android:background="#e5e5e5" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,7 +105,16 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textColor="#7d7d7d"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1sp"
+                android:layout_marginBottom="10sp"
+                android:layout_marginTop="10sp"
+                android:background="#e5e5e5" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -111,6 +140,13 @@
                 android:layout_height="wrap_content" >
             </com.findhotel.widget.FloatView>
 
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1sp"
+                android:layout_marginBottom="10sp"
+                android:layout_marginTop="10sp"
+                android:background="#e5e5e5" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -132,10 +168,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5sp"
-            android:background="@drawable/custom_btn_gray"
-            android:drawableLeft="@drawable/about_server_tel"
+            android:background="@drawable/custom_btn_white"
+            android:drawableLeft="@drawable/about_90"
+            android:drawablePadding="15dp"
+            android:drawableRight="@drawable/arrow"
+            android:gravity="center|left"
+            android:padding="5sp"
             android:text="拨打找住的客服电话"
-            android:textColor="#FFFFFF" />
+            android:textColor="#343434" />
     </LinearLayout>
 
 </LinearLayout>

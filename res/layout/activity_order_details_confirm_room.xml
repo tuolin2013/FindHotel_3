@@ -264,7 +264,7 @@
         <View
             android:layout_width="fill_parent"
             android:layout_height="1px"
-            android:background="@color/border"
+            android:background="#e5e5e5"
             android:layerType="software" />
 
         <TableLayout
@@ -346,7 +346,7 @@
         <View
             android:layout_width="fill_parent"
             android:layout_height="1px"
-            android:background="@color/border"
+            android:background="#e5e5e5"
             android:layerType="software" />
 
         <LinearLayout
@@ -356,26 +356,28 @@
 
             <Button
                 android:id="@+id/button1"
-                android:layout_weight="0.5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
+                android:layout_weight="0.5"
                 android:background="@drawable/custom_btn_gray"
                 android:text="取消订单"
                 android:textColor="#FFFFFF"
                 android:textSize="36sp" />
+
             <View
                 android:layout_width="2dp"
                 android:layout_height="50sp"
                 android:layout_gravity="center"
                 android:background="@drawable/icon_vertical_line"
                 android:layerType="software" />
+
             <Button
                 android:id="@+id/button1"
-                android:layout_weight="0.5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
+                android:layout_weight="0.5"
                 android:background="@drawable/custom_btn_green"
                 android:text="支付"
                 android:textColor="#FFFFFF"
