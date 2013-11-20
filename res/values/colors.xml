@@ -1,0 +1,17 @@
+<resources>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="deepred">#A60000</color>
+    <color name="deeppink">#FF1493</color><!--深粉红色 -->  
+    <color name="orangered">#FF5900</color><!--红橙色 -->
+    <color name="springgreen">#00FF7F</color>
+    <color name="lightgreen">#8EF13C</color><!--春绿色-->  
+    <color name="lightseagreen">#20B2AA</color><!--亮海蓝色 -->  
+    <color name="lime">#00FF00</color><!--酸橙色 -->  
+    <color name="blue">#0000FF</color><!--蓝色 -->  
+    <color name="purple">#5A0DAC</color>
+    <color name="orange">#FF7500</color><!--蓝色 -->   
+    <color name="border">#7d7d7d</color>
+    <color name="background_tab_pressed">#6633B5E5</color>
+</resources>

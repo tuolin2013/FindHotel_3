@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.findhotel"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="androd.permission.INSTALL_PCAKAGES" />
+    <uses-permission android:name="androd.permission.DELETE_PACKAGES" />
+    <uses-permission android:name="androd.permission.CLEAR_APP_USER_DATA" />
+    <uses-permission android:name="androd.permission.CLEAR_APP_CACHE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:name="com.findhotel.util.CacheApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.findhotel.activity.StartActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.MainActivity"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.HotelListActivity"
+            android:label="@string/title_activity_want_togo"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.WantGoActivity"
+            android:label="@string/title_activity_want_togo"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.RecommendActivity"
+            android:label="@string/title_activity_professional_go"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.MyProfileActivity"
+            android:label="@string/title_activity_my_profile"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.MyOrderActivity"
+            android:label="@string/title_activity_my_order"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.MyFavoriteActivity"
+            android:label="@string/title_activity_my_favorite"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.NoticeActivity"
+            android:label="@string/title_activity_notice"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.FeedbackActivity"
+            android:label="@string/title_activity_feedback"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.MyPhotoActivity"
+            android:label="@string/title_activity_my_photo"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.MyCouponActivity"
+            android:label="@string/title_activity_my_coupon"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.HotelDetailsActivity"
+            android:label="@string/title_activity_hotel_details"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.RoomListActivity"
+            android:label="@string/title_activity_room_list"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.CheckInInfoActivity"
+            android:label="@string/title_activity_check_in_info" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.OrderSubmitActivity"
+            android:label="@string/title_activity_order_submit"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.OrderPayActivity"
+            android:label="@string/title_activity_order_pay"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.PayActivity"
+            android:label="@string/title_activity_pay"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.MapViewActivity"
+            android:label="@string/title_activity_map_view"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.PhotographActivity"
+            android:label="@string/title_activity_photograph"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.MapGoogleNavigateActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.ExchangeCouponsActivity"
+            android:label="@string/title_activity_exchange_coupons"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.HaggleActivity"
+            android:label="@string/title_activity_haggle"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.HaggleAnswerActivity"
+            android:label="@string/title_activity_haggle_answer"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.OrderDetails_State_ConfirmActivity"
+            android:label="@string/title_activity_order_details__confirm"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.OrderDetails_State_WaitCheckInActivity"
+            android:label="@string/title_activity_order_details__wait_check_in"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.OrderDetails_State_CheckedActivity"
+            android:label="@string/title_activity_order_details__checked"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.findhotel.activity.OrderDetails_State_ConfirmRoomActivity"
+            android:label="@string/title_activity_order_details__confirm_room"
+            android:screenOrientation="portrait" >
+        </activity>
+    </application>
+
+</manifest>

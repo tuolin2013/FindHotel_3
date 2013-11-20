@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="app_name">找住的</string>
+    <string name="dummy_button">开始找住的</string>
+    <string name="dummy_content">找住的</string>
+    <string name="title_activity_main">找住的</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_want_togo">我要去的</string>
+    <string name="title_activity_friends_go">朋友去过的</string>
+    <string name="title_activity_professional_go">专业推荐</string>
+    <string name="title_activity_fans_camp">粉丝阵营</string>
+    <string name="title_activity_popularity">人气大比拼</string>
+    <string name="title_activity_my_profile">我的资料</string>
+    <string name="title_activity_my_order">我的订单</string>
+    <string name="title_activity_my_favorite">我的收藏</string>
+    <string name="title_activity_notice">通知中心</string>
+    <string name="title_activity_feedback">意见反馈</string>
+    <string name="title_activity_my_photo">我的靓照</string>
+    <string name="title_activity_my_coupon">我的优惠券</string>
+    <string name="title_activity_hotel_details">详情</string>
+    <string name="title_activity_room_list">选择房间</string>
+    <string name="title_activity_check_in_info">入住信息</string>
+    <string name="title_activity_order_submit">生成订单</string>
+    <string name="title_activity_order_pay">订单详情</string>
+    <string name="title_activity_pay">支付订单</string>
+    <string name="title_activity_map_view">MapViewActivity</string>
+    <string name="title_activity_photograph">随手拍</string>
+    <string name="title_activity_exchange_coupons">兑换优惠券</string>
+    <string name="title_activity_haggle">我要发飙</string>
+    <string name="title_activity_haggle_answer">旅馆接飙了</string>
+    <string name="title_activity_order_details__confirm">OrderDetails_ConfirmActivity</string>
+    <string name="title_activity_order_details__wait_check_in">OrderDetails_WaitCheckInActivity</string>
+    <string name="title_activity_order_details__checked">OrderDetails_CheckedActivity</string>
+    <string name="title_activity_order_details__confirm_room">OrderDetails_ConfirmRoomActivity</string>
+
+</resources>

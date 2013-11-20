@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="5sp" >
+
+    <ImageView
+        android:id="@+id/iv_coupons"
+        android:layout_width="48sp"
+        android:layout_height="48sp"
+        android:src="@drawable/coupon_10" />
+
+    <TextView
+        android:id="@+id/tv_expired"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:text="TextView"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/iv_lock_open"
+        android:layout_width="48sp"
+        android:layout_height="48sp"
+        android:layout_marginRight="25sp"
+        android:clickable="true"
+        android:src="@drawable/icon_lock_open" />
+
+    <ImageView
+        android:id="@+id/iv_gift"
+        android:layout_width="48sp"
+        android:layout_height="48sp"
+        android:src="@drawable/icon_gift" />
+
+</LinearLayout>

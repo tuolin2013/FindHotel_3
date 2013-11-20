@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <meta http-equiv="Content-type" content="text/html; charset=gb2312">
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true">
+        </script>
+        <script type="text/javascript">
+            
+            var map;
+            var markersArray = [];
+            function initialize(){
+                var location = JSON.parse(android.getCurrentLocation());
+                var haightAshbury = new google.maps.LatLng(location.mLatitude, location.mLongitude);
+                var recycle = new google.maps.MarkerImage('../img/location.png');
+                var mapOptions = {
+                    zoom: 18,
+                    center: haightAshbury,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+                addMarker(haightAshbury, recycle, null);
+            }
+            
+            function addMarker(location, recycle, data){
+                //this recycle will loded from wcf server.
+                var marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    icon: recycle
+                });
+                
+                markersArray.push(marker);
+            }
+        </script>
+    </head>
+    <body onload="initialize()">
+        <div id="map_canvas" style="width:100%;height:400px;margin-top:10px">
+        </div>
+       
+    </body>
+</html>

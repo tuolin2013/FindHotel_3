@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/btn_booking"
+            android:layout_width="wrap_content"
+            android:layout_height="40sp"
+            android:layout_weight="0.3"
+            android:background="@drawable/btn_bg_line"
+            android:tag="YDZ"
+            android:text="预订中"
+            android:textColor="@color/orange" />
+
+        <Button
+            android:id="@+id/btn_waiting"
+            android:layout_width="wrap_content"
+            android:layout_height="40sp"
+            android:layout_weight="0.3"
+            android:background="@drawable/btn_bg"
+            android:tag="DRZ"
+            android:text="待入住" />
+
+        <Button
+            android:id="@+id/btn_stayed"
+            android:layout_width="wrap_content"
+            android:layout_height="40sp"
+            android:layout_weight="0.3"
+            android:background="@drawable/btn_bg"
+            android:tag="YRZ"
+            android:text="住过的" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>

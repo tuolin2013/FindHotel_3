@@ -1,0 +1,227 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="分享你在"
+                android:textColor="#7d7d7d"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="分享你在"
+                android:textColor="#ff7500"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="分享你在"
+                android:textColor="#ff7500"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="的靓照"
+                android:textColor="#7d7d7d"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="*"
+            android:stretchColumns="*" >
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5sp"
+                    android:background="@drawable/border_selector"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="5sp" >
+
+                    <ImageView
+                        android:id="@+id/iv_photo_1"
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:layout_margin="5sp"
+                        android:src="@drawable/icon_s_camera" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5sp"
+                    android:background="@drawable/border_selector"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="5sp" >
+
+                    <ImageView
+                        android:id="@+id/iv_photo_2"
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:layout_margin="5sp"
+                        android:src="@drawable/icon_s_camera" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5sp"
+                    android:background="@drawable/border_selector"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="5sp" >
+
+                    <ImageView
+                        android:id="@+id/iv_photo_3"
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:layout_margin="5sp"
+                        android:src="@drawable/icon_s_camera" />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5sp"
+                    android:background="@drawable/border_selector"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="5sp" >
+
+                    <ImageView
+                        android:id="@+id/iv_video_1"
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:layout_margin="5sp"
+                        android:src="@drawable/icon_s_video" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5sp"
+                    android:background="@drawable/border_selector"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="5sp" >
+
+                    <ImageView
+                        android:id="@+id/iv_video_2"
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:layout_margin="5sp"
+                        android:src="@drawable/icon_s_video" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5sp"
+                    android:background="@drawable/border_selector"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:padding="5sp" >
+
+                    <ImageView
+                        android:id="@+id/iv_video_3"
+                        android:layout_width="80sp"
+                        android:layout_height="80sp"
+                        android:layout_margin="5sp"
+                        android:src="@drawable/icon_s_video" />
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:layout_marginTop="20sp"
+            android:background="@drawable/border"
+            android:focusable="true"
+            android:focusableInTouchMode="true" >
+
+            <EditText
+                android:id="@+id/etv_speech"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="top|left"
+                android:hint="请输入你想要说的话"
+                android:maxLength="140"
+                android:maxLines="5"
+                android:minLines="5"
+                android:textColor="#c5c5c5"
+                android:textSize="24sp" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/tv_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:text="140"
+                android:textColor="@color/orange"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:layout_marginTop="50sp"
+            android:background="@drawable/custom_btn_green"
+            android:text="发    表"
+            android:textColor="#FFFFFF"
+            android:textSize="36sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:layout_marginTop="20sp"
+            android:text="*分享的视频和照片有机会获得大家的“赞”，和旅友馈赠的优惠券。\n*单个照片、视频获得2014个“赞”，找住的平台奖励200元的房费抵扣券。"
+            android:textColor="#7d7d7d"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+</ScrollView>
