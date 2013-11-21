@@ -51,15 +51,12 @@ public class WantGoChoiceFragment extends Fragment {
 	String testJson = "{pgCnt:10,pg:2,dataV:2013091012,items:[{imgUrl:www.zhaozhude.comimagedemon,hotelCnt:12,title:临水而建、枕水而居,ctg:ctg001},{imgUrl:www.zhaozhude.comimagedemon,hotelCnt:19,title:在旅途中寻觅家的味道,ctg:ctg002},{imgUrl: www.zhaozhude.comimagedemon,hotelCnt:23,title:【找住的】时尚旅馆，最炫民族风,ctg:ctg003}]}";
 	ChoiceAdapter mAdapter;
 	ExecutorService executorService = Executors.newCachedThreadPool();
-	String cacheKey = "com.findhotel.fragment.WantGoChoiceFragment";
-	CacheApplication cacheApplication;
 	JSONArray datasource;
 	int page_count, page_no = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		cacheApplication = (CacheApplication) getActivity().getApplication();
 		super.onCreate(savedInstanceState);
 	}
 
@@ -107,20 +104,7 @@ public class WantGoChoiceFragment extends Fragment {
 
 	void loadData() {
 
-		if (cacheApplication.getCache(cacheKey) == null) {
-			executorService.execute(new LoadRunnable());
-		} else {
-			String cachedDatasource = cacheApplication.getCache(cacheKey);
-			try {
-				JSONObject jsObj = new JSONObject(cachedDatasource);
-				datasource = jsObj.getJSONArray("items");
-				mAdapter = new ChoiceAdapter(getActivity(), datasource);
-				mPullRefreshListView.setAdapter(mAdapter);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		executorService.execute(new LoadRunnable());
 
 	}
 
@@ -166,7 +150,6 @@ public class WantGoChoiceFragment extends Fragment {
 				@Override
 				public void onSuccess(final String arg0) {
 					super.onSuccess(arg0);
-					cacheApplication.setCache(cacheKey, arg0);
 					JSONObject jsObj;
 					try {
 						jsObj = new JSONObject(arg0);

@@ -16,7 +16,7 @@ public class DateUtil {
 	 * @return Ïà²îÌìÊı
 	 */
 	public static long getDistanceDays(String str1, String str2) {
-		DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		Date one;
 		Date two;
 		long days = 0;

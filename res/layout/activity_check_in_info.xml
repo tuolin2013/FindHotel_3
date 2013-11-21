@@ -226,6 +226,7 @@
             android:paddingBottom="10sp" >
 
             <TextView
+                android:id="@+id/tv_note"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="本订单最多能用"
@@ -264,7 +265,7 @@
                         android:src="@drawable/icon_minus" />
 
                     <EditText
-                        android:id="@+id/editText1"
+                        android:id="@+id/etv_coupon"
                         android:layout_width="wrap_content"
                         android:layout_height="48sp"
                         android:background="@null"
@@ -350,7 +351,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/textView11"
+                            android:id="@+id/tv_order_total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="TextView"
@@ -372,7 +373,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/textView11"
+                            android:id="@+id/tv_order_discount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="TextView"
@@ -394,7 +395,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/textView11"
+                            android:id="@+id/tv_order_cash_pay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="TextView"
@@ -416,7 +417,7 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/textView11"
+                            android:id="@+id/tv_order_deposit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="TextView"

@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ public class AvatarAdapter extends BaseAdapter {
 	private Context mContext;
 	private JSONArray list;
 	DisplayImageOptions options;
-	private ImageLoader mLoader;
+	ImageLoader mLoader;
 	HashMap<String, Integer> icon_lableHashMap;
 
 	public AvatarAdapter(Context mContext, JSONArray list) {
@@ -31,6 +32,8 @@ public class AvatarAdapter extends BaseAdapter {
 		mInflater = LayoutInflater.from(this.mContext);
 		this.list = list;
 		mLoader = ImageLoader.getInstance();
+		options = new DisplayImageOptions.Builder().showStubImage(R.drawable.ic_stub).showImageForEmptyUri(R.drawable.ic_empty)
+				.showImageOnFail(R.drawable.ic_error).cacheInMemory().cacheOnDisc().bitmapConfig(Bitmap.Config.RGB_565).build();
 	}
 
 	@Override
@@ -68,9 +71,11 @@ public class AvatarAdapter extends BaseAdapter {
 
 		try {
 			JSONObject obj = list.getJSONObject(position);
-			// mLoader.displayImage(getItem(position), holder.imageView, options);
-			holder.imageView.setImageResource(R.drawable.temp_avatar);
-			holder.countText.setText("12");
+			String photeUrl = obj.getString("photoUrl");
+			String count = obj.getString("cnt");
+			mLoader.displayImage(photeUrl, holder.imageView);
+			// holder.imageView.setImageResource(R.drawable.temp_avatar);
+			holder.countText.setText(count);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

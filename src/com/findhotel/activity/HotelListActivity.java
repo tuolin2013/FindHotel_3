@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.bool;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -58,6 +59,7 @@ public class HotelListActivity extends SherlockActivity {
 	CacheApplication cacheApplication;
 	JSONArray datasource;
 	int pg_no = 1, pg_cnt;
+	boolean debugger = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +108,7 @@ public class HotelListActivity extends SherlockActivity {
 
 	void initView() {
 		mPullToRefreshListView = (PullToRefreshListView) findViewById(R.id.pull_to_refresh_listview_hotel);
-		loadTestData();
+		loadData();
 		mPullToRefreshListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 			@Override
 			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
@@ -139,18 +141,18 @@ public class HotelListActivity extends SherlockActivity {
 		});
 	}
 
-	void loadTestData() {
-		try {
-			JSONObject json = new JSONObject(testJson);
-			JSONArray datasource = json.getJSONArray("items");
-			mAdapter = new HotelAdapter(mContext, datasource);
-			mPullToRefreshListView.setAdapter(mAdapter);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	void loadData() {
+		// try {
+		// JSONObject json = new JSONObject(testJson);
+		// JSONArray datasource = json.getJSONArray("items");
+		// mAdapter = new HotelAdapter(mContext, datasource);
+		// mPullToRefreshListView.setAdapter(mAdapter);
+		// } catch (JSONException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
-		// executorService.execute(new LoadRunnable());
+		executorService.execute(new LoadRunnable());
 		// if (cacheApplication.getCache(category) == null) {
 		// executorService.execute(new LoadRunnable());
 		// } else {
@@ -205,12 +207,14 @@ public class HotelListActivity extends SherlockActivity {
 	private String creatUrl() {
 		String url = "";
 		if ("want_go".equals(category)) {
+
 		} else if ("friend_go".equals(category)) {
 		} else if ("professional_go".equals(category)) {
 			url = WEB_SERVER_URL + "/zzd/hotel/v1/popularList";
 		} else if ("fans_camp".equals(category)) {
 		} else if ("popularity".equals(category)) {
 		} else {
+			url = WEB_SERVER_URL + "/zzd/hotel/v1/areaList";
 		}
 		return url;
 
@@ -219,6 +223,7 @@ public class HotelListActivity extends SherlockActivity {
 	private RequestParams createParams() {
 		RequestParams params = new RequestParams();
 		if ("want_go".equals(category)) {
+
 		} else if ("friend_go".equals(category)) {
 		} else if ("professional_go".equals(category)) {
 			params.put("appId", "appid");
@@ -228,6 +233,9 @@ public class HotelListActivity extends SherlockActivity {
 		} else if ("fans_camp".equals(category)) {
 		} else if ("popularity".equals(category)) {
 		} else {
+			params.put("appId", "appid");
+			params.put("area", category);
+			params.put("pg", pg_no + "");
 		}
 		return params;
 
@@ -249,13 +257,17 @@ public class HotelListActivity extends SherlockActivity {
 
 				@Override
 				public void onStart() {
+					if (debugger) {
+						Toast.makeText(HotelListActivity.this, createParams().toString(), Toast.LENGTH_LONG).show();
+					}
 					super.onStart();
 				}
 
 				@Override
 				public void onSuccess(final String arg0) {
-					Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
-					cacheApplication.setCache(category, arg0);
+					if (debugger) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
 					JSONObject jsObj;
 					try {
 						jsObj = new JSONObject(arg0);

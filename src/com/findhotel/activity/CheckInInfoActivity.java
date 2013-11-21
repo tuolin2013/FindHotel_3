@@ -1,10 +1,14 @@
 package com.findhotel.activity;
 
+import static com.findhotel.constant.Constant.WEB_SERVER_URL;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,17 +19,20 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.findhotel.R;
 import com.findhotel.util.DateUtil;
-import com.findhotel.util.DisplayUtil;
 import com.findhotel.util.ExitApplication;
 import com.findhotel.util.MyActionMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +43,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableLayout;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TableLayout.LayoutParams;
 import android.widget.TableRow;
@@ -45,12 +53,18 @@ public class CheckInInfoActivity extends SherlockActivity {
 	SlidingMenu menu;
 	Button nextButton, exchangeButton;
 	Spinner numSpinner;
-	TextView hotelNameText, hotelAreaText, roomTypeText, dateText;
+	TextView hotelNameText, hotelAreaText, roomTypeText, dateText;// hotel information
+	TextView orderTotalText, discountText, cashpayText, depositText, noteText;// order
+	EditText couponText;
 	Context mContext = CheckInInfoActivity.this;
 	List<EditText> editTexts;
 	TableLayout tableLayout;
 	JSONObject hotel, room;
 	String check_in_day, check_out_day;
+	String response = "";
+	int rmCnt = 0;
+	ExecutorService executorService = Executors.newCachedThreadPool();
+	boolean debugger = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +104,14 @@ public class CheckInInfoActivity extends SherlockActivity {
 		roomTypeText = (TextView) findViewById(R.id.tv_room_type);
 		dateText = (TextView) findViewById(R.id.tv_in_date);
 
+		orderTotalText = (TextView) findViewById(R.id.tv_order_total);
+		discountText = (TextView) findViewById(R.id.tv_order_discount);
+		cashpayText = (TextView) findViewById(R.id.tv_order_cash_pay);
+		depositText = (TextView) findViewById(R.id.tv_order_deposit);
+		noteText = (TextView) findViewById(R.id.tv_note);
+
+		couponText = (EditText) findViewById(R.id.etv_coupon);
+
 		initActionBar();
 		exchangeButton = (Button) findViewById(R.id.btn_exchange);
 		exchangeButton.setOnClickListener(new OnClickListener() {
@@ -104,31 +126,8 @@ public class CheckInInfoActivity extends SherlockActivity {
 		});
 
 		tableLayout = (TableLayout) findViewById(R.id.tab_check_in);
-		// room_numText = (EditText) findViewById(R.id.etv_room_num);
-		// room_numText.addTextChangedListener(new TextWatcher() {
-		//
-		// @Override
-		// public void onTextChanged(CharSequence s, int start, int before, int count) {
-		// // TODO Auto-generated method stub
-		// int num = Integer.parseInt(room_numText.getText().toString());
-		// addRow(num);
-		//
-		// }
-		//
-		// @Override
-		// public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		//
-		// @Override
-		// public void afterTextChanged(Editable s) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		// });
-
 		nextButton = (Button) findViewById(R.id.btn_next);
+
 		nextButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -139,7 +138,6 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 			}
 		});
-
 		addRow(1);
 		numSpinner = (Spinner) findViewById(R.id.sp_room_num);
 		String[] nums = { "1", "2", "3", "4", "5" };
@@ -152,6 +150,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				// TODO Auto-generated method stub
 				addRow(arg2 + 1);
+				rmCnt = arg2 + 1;
 
 			}
 
@@ -161,6 +160,24 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 			}
 		});
+
+		// load default data.
+		RequestParams params = new RequestParams();
+
+		params.put("appId", "appId");
+		try {
+			hotel = new JSONObject(getIntent().getStringExtra("hotel"));
+			params.put("ghId", hotel.getString("ghId"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		params.put("rmId", getIntent().getStringExtra("rmId"));
+		params.put("startDate", check_in_day);
+		params.put("endDate", check_out_day);
+		params.put("rmCnt", rmCnt + "");
+		params.put("useCoupons", "0");
+		executorService.execute(new CalculateOrderRunnable(params));
 
 	}
 
@@ -193,7 +210,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 			check_out_day = getIntent().getStringExtra("check_out_day");
 
 			try {
-				SimpleDateFormat sdf_1 = new SimpleDateFormat("yyyy/MM/dd");
+				SimpleDateFormat sdf_1 = new SimpleDateFormat("yyyy-MM-dd");
 				SimpleDateFormat sdf_2 = new SimpleDateFormat("MM‘¬dd»’");
 
 				Date start_date = sdf_1.parse(check_in_day);
@@ -242,4 +259,87 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 		}
 	}
+
+	class CalculateOrderRunnable implements Runnable {
+		RequestParams params;
+
+		public CalculateOrderRunnable(RequestParams params) {
+			super();
+			this.params = params;
+		}
+
+		@Override
+		public void run() {
+			Looper.prepare();
+			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/createOrder";
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable arg0, String arg1) {
+					if (debugger) {
+						Toast.makeText(mContext, arg1, Toast.LENGTH_LONG).show();
+					}
+				}
+
+				@Override
+				public void onStart() {
+					if (debugger) {
+						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
+					}
+					super.onStart();
+				}
+
+				@Override
+				public void onSuccess(final String arg0) {
+					if (debugger) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
+					try {
+						response = arg0;
+						JSONObject object = new JSONObject(arg0);
+						calculateHandler.obtainMessage(0, -1, -1, object).sendToTarget();
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						if (debugger) {
+							Toast.makeText(mContext, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+						}
+						calculateHandler.sendEmptyMessage(1);
+					}
+
+				}
+			});
+			Looper.loop();
+		}
+
+	}
+
+	private Handler calculateHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 0:
+				JSONObject json = (JSONObject) msg.obj;
+				try {
+					orderTotalText.setText(json.getString("totalPrice"));
+					discountText.setText(json.getString("discount"));
+					cashpayText.setText(json.getString("actPrice"));
+					depositText.setText(json.getString("deposit"));
+					noteText.setText(json.getString("notes"));
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	};
 }
