@@ -152,6 +152,9 @@ public class CheckInInfoActivity extends SherlockActivity {
 				addRow(arg2 + 1);
 				rmCnt = arg2 + 1;
 
+				// RequestParams params = new RequestParams();
+				// executorService.execute(new CalculateOrderRunnable(params));
+
 			}
 
 			@Override
@@ -168,15 +171,16 @@ public class CheckInInfoActivity extends SherlockActivity {
 		try {
 			hotel = new JSONObject(getIntent().getStringExtra("hotel"));
 			params.put("ghId", hotel.getString("ghId"));
+			params.put("rmId", getIntent().getStringExtra("rmId"));
+			params.put("startDate", getIntent().getStringExtra("check_in_day"));
+			params.put("endDate", getIntent().getStringExtra("check_out_day"));
+			params.put("rmCnt", rmCnt + "");
+			params.put("useCoupons", "0");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		params.put("rmId", getIntent().getStringExtra("rmId"));
-		params.put("startDate", check_in_day);
-		params.put("endDate", check_out_day);
-		params.put("rmCnt", rmCnt + "");
-		params.put("useCoupons", "0");
+
 		executorService.execute(new CalculateOrderRunnable(params));
 
 	}
@@ -273,6 +277,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 			Looper.prepare();
 			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/createOrder";
 			AsyncHttpClient client = new AsyncHttpClient();
+			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
 			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
 
 				@Override
@@ -312,7 +317,6 @@ public class CheckInInfoActivity extends SherlockActivity {
 			});
 			Looper.loop();
 		}
-
 	}
 
 	private Handler calculateHandler = new Handler() {

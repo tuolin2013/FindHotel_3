@@ -750,6 +750,7 @@ public class RoomListActivity extends SherlockActivity {
 					}
 				});
 
+				final String rmId=item.getString("rmId");
 				holder.reservationsButton.setTag(item);
 				holder.reservationsButton.setOnClickListener(new OnClickListener() {
 
