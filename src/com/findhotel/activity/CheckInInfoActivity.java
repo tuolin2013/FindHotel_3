@@ -13,6 +13,34 @@ import java.util.concurrent.Executors;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableLayout.LayoutParams;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -26,36 +54,14 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.TableLayout.LayoutParams;
-import android.widget.TableRow;
-import android.widget.TextView;
-
 public class CheckInInfoActivity extends SherlockActivity {
 	SlidingMenu menu;
 	Button nextButton, exchangeButton;
+	ImageView plusImage, minusImage;
 	Spinner numSpinner;
 	TextView hotelNameText, hotelAreaText, roomTypeText, dateText;// hotel information
 	TextView orderTotalText, discountText, cashpayText, depositText, noteText;// order
-	EditText couponText;
+	EditText couponText, claim_moreText, contactText, mobileText;
 	Context mContext = CheckInInfoActivity.this;
 	List<EditText> editTexts;
 	TableLayout tableLayout;
@@ -63,14 +69,15 @@ public class CheckInInfoActivity extends SherlockActivity {
 	String check_in_day, check_out_day;
 	String response = "";
 	int rmCnt = 0;
+	int availableCoupon, usedCoupon;
 	ExecutorService executorService = Executors.newCachedThreadPool();
+	ProgressDialog progressDialog;
 	boolean debugger = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Styled);
 		super.onCreate(savedInstanceState);
-
 		ExitApplication.getInstance().addActivity(CheckInInfoActivity.this);
 		setContentView(R.layout.activity_check_in_info);
 		menu = new MyActionMenu(CheckInInfoActivity.this).initView();
@@ -99,6 +106,9 @@ public class CheckInInfoActivity extends SherlockActivity {
 	}
 
 	void initView() {
+		plusImage = (ImageView) findViewById(R.id.iv_plus);
+		minusImage = (ImageView) findViewById(R.id.iv_minus);
+
 		hotelNameText = (TextView) findViewById(R.id.tv_hotel_name);
 		hotelAreaText = (TextView) findViewById(R.id.tv_hotel_area);
 		roomTypeText = (TextView) findViewById(R.id.tv_room_type);
@@ -111,6 +121,9 @@ public class CheckInInfoActivity extends SherlockActivity {
 		noteText = (TextView) findViewById(R.id.tv_note);
 
 		couponText = (EditText) findViewById(R.id.etv_coupon);
+		claim_moreText = (EditText) findViewById(R.id.etv_claim_more);
+		contactText = (EditText) findViewById(R.id.etv_contact);
+		mobileText = (EditText) findViewById(R.id.etv_mobile);
 
 		initActionBar();
 		exchangeButton = (Button) findViewById(R.id.btn_exchange);
@@ -132,9 +145,32 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(CheckInInfoActivity.this, OrderDetails_State_ConfirmActivity.class);
-				startActivity(intent);
+				RequestParams params = new RequestParams();
+				try {
+					JSONObject obj = new JSONObject(getIntent().getStringExtra("hotel"));
+					JSONObject room = new JSONObject(getIntent().getStringExtra("room"));
+					params.put("appId", "");
+					params.put("ghId", obj.getString("ghId"));
+					params.put("ghName", obj.getString("ghName"));
+					params.put("area", obj.getString("area"));
+					params.put("rmId", getIntent().getStringExtra("rmId"));
+					params.put("rmName", room.getString("rmName"));
+					params.put("startDate", getIntent().getStringExtra("check_in_day"));
+					params.put("endDate", getIntent().getStringExtra("check_out_day"));
+					params.put("rmCnt", rmCnt + "");
+					params.put("guest", getGuest());
+					params.put("contact", contactText.getText().toString());
+					params.put("contPhone", mobileText.getText().toString());
+					params.put("reqMore", claim_moreText.getText().toString());
+					params.put("totalPrice", orderTotalText.getText().toString());
+					params.put("discount", discountText.getText().toString());
+					params.put("actPrice", cashpayText.getText().toString());
+					params.put("deposit", depositText.getText().toString());
+					executorService.execute(new SaveOrderRunnable(params));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 			}
 		});
@@ -151,10 +187,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 				// TODO Auto-generated method stub
 				addRow(arg2 + 1);
 				rmCnt = arg2 + 1;
-
-				// RequestParams params = new RequestParams();
-				// executorService.execute(new CalculateOrderRunnable(params));
-
+				refreshOrder(rmCnt);
 			}
 
 			@Override
@@ -264,6 +297,81 @@ public class CheckInInfoActivity extends SherlockActivity {
 		}
 	}
 
+	String getGuest() {
+		String guest = "";
+		for (TextView tv : editTexts) {
+			guest += tv.getText().toString() + ";";
+		}
+		return guest;
+
+	}
+
+	void initCoupon() {
+		JSONObject obj;
+		try {
+			obj = new JSONObject(response);
+			// int coupon = obj.getInt("coupons");
+			int coupon = 20;
+			int limits = obj.getInt("limits");
+			availableCoupon = coupon > limits ? limits : coupon;
+			usedCoupon = availableCoupon;
+			couponText.setText(availableCoupon + "张");
+			discountText.setText(coupon * 10 + "");
+			plusImage.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					if (usedCoupon < availableCoupon) {
+						++usedCoupon;
+						couponText.setText(usedCoupon + "张");
+						int discount = usedCoupon * 10;
+						discountText.setText(discount + "");
+					}
+
+				}
+			});
+
+			minusImage.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					if (usedCoupon > 0) {
+						--usedCoupon;
+						couponText.setText(usedCoupon + "张");
+						couponText.setText(usedCoupon + "张");
+						int discount = usedCoupon * 10;
+						discountText.setText(discount + "");
+					}
+
+				}
+			});
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	void refreshOrder(int rmCnt) {
+		if (!TextUtils.isEmpty(response)) {
+			JSONObject object;
+			try {
+				object = new JSONObject(response);
+				int total = object.getInt("totalPrice");
+				int refresh = total * rmCnt;
+				orderTotalText.setText(refresh + "");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
 	class CalculateOrderRunnable implements Runnable {
 		RequestParams params;
 
@@ -332,6 +440,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 					cashpayText.setText(json.getString("actPrice"));
 					depositText.setText(json.getString("deposit"));
 					noteText.setText(json.getString("notes"));
+					initCoupon();
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -346,4 +455,110 @@ public class CheckInInfoActivity extends SherlockActivity {
 		}
 
 	};
+
+	class SaveOrderRunnable implements Runnable {
+		RequestParams params;
+
+		public SaveOrderRunnable(RequestParams params) {
+			super();
+			this.params = params;
+		}
+
+		@Override
+		public void run() {
+			Looper.prepare();
+
+			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/saveOrder";
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable arg0, String arg1) {
+					progressDialog.dismiss();
+					if (debugger) {
+						Toast.makeText(mContext, arg1, Toast.LENGTH_LONG).show();
+					}
+				}
+
+				@Override
+				public void onStart() {
+					if (debugger) {
+						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
+					}
+					progressDialog = ProgressDialog.show(CheckInInfoActivity.this, null, "正在处理，请稍候...", true, false);
+					super.onStart();
+				}
+
+				@Override
+				public void onSuccess(final String arg0) {
+					if (debugger) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
+					saveOrderHandler.obtainMessage(0, -1, -1, arg0).sendToTarget();
+
+				}
+			});
+			Looper.loop();
+
+		}
+
+	}
+
+	private Handler saveOrderHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			progressDialog.dismiss();
+			switch (msg.what) {
+			case 0:
+
+				String response = (String) msg.obj;
+				try {
+					JSONObject json = new JSONObject(response);
+					String code = json.getString("code");
+					String orderId = json.getString("orderId");
+					String message = "";
+					if ("200".equals(code)) {
+						message = "请求成功";
+						Intent intent = new Intent(CheckInInfoActivity.this, OrderDetails_State_ConfirmRoomActivity.class);
+						startActivity(intent);
+
+					} else {
+						if ("600".equals(code)) {
+							message = "请求失败，无房";
+						} else if ("610".equals(code)) {
+							message = "请求失败，请求使用优惠劵的数量与实际拥有可用数量不符";
+						} else if ("620".equals(code)) {
+							message = "请求失败，请求使用优惠劵的数量与旅馆允许使用数量不符";
+						}
+						showAlertMessage(message);
+					}
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	};
+
+	private void showAlertMessage(String message) {
+		new AlertDialog.Builder(mContext).setTitle("系统消息").setMessage(message)
+				.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						dialog.dismiss();
+
+					}
+				}).show();
+	}
 }
