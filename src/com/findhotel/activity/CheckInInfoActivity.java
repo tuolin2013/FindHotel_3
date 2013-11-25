@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -149,7 +148,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 				try {
 					JSONObject obj = new JSONObject(getIntent().getStringExtra("hotel"));
 					JSONObject room = new JSONObject(getIntent().getStringExtra("room"));
-					params.put("appId", "");
+					params.put("appId", "appid");
 					params.put("ghId", obj.getString("ghId"));
 					params.put("ghName", obj.getString("ghName"));
 					params.put("area", obj.getString("area"));
@@ -162,10 +161,14 @@ public class CheckInInfoActivity extends SherlockActivity {
 					params.put("contact", contactText.getText().toString());
 					params.put("contPhone", mobileText.getText().toString());
 					params.put("reqMore", claim_moreText.getText().toString());
+					// useCoupons
+					params.put("useCoupons", usedCoupon + "");
 					params.put("totalPrice", orderTotalText.getText().toString());
 					params.put("discount", discountText.getText().toString());
 					params.put("actPrice", cashpayText.getText().toString());
 					params.put("deposit", depositText.getText().toString());
+					String p = params.toString();
+
 					executorService.execute(new SaveOrderRunnable(params));
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -313,6 +316,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 			int coupon = obj.getInt("coupons");
 			// int coupon = 20;
 			int limits = obj.getInt("limits");
+			final double depositRatio = obj.getDouble("depositRatio");
 			availableCoupon = coupon > limits ? limits : coupon;
 			usedCoupon = availableCoupon;
 			couponText.setText(availableCoupon + "张");
@@ -328,9 +332,10 @@ public class CheckInInfoActivity extends SherlockActivity {
 						int discount = usedCoupon * 10;
 						discountText.setText(discount + "");
 						int total = Integer.parseInt(orderTotalText.getText().toString());
-						int deposit = Integer.parseInt(depositText.getText().toString());
+						int deposit = (int) ((total - discount) * depositRatio * 0.01);
 						int cash = total - discount - deposit;
 						cashpayText.setText(cash + "");
+						depositText.setText(deposit + "");
 
 					}
 
@@ -349,8 +354,9 @@ public class CheckInInfoActivity extends SherlockActivity {
 						int discount = usedCoupon * 10;
 						discountText.setText(discount + "");
 						int total = Integer.parseInt(orderTotalText.getText().toString());
-						int deposit = Integer.parseInt(depositText.getText().toString());
+						int deposit = (int) ((total - discount) * depositRatio * 0.01);
 						int cash = total - discount - deposit;
+						depositText.setText(deposit + "");
 						cashpayText.setText(cash + "");
 					}
 
@@ -397,6 +403,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 	class CalculateOrderRunnable implements Runnable {
 		RequestParams params;
+		
 
 		public CalculateOrderRunnable(RequestParams params) {
 			super();
@@ -456,7 +463,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0:
-				//{"limits":70,"rmCnt":1,"startDate":"2013-11-27","deposit":13,"depositRatio":10,"endDate":"2013-11-28","code":"200","rmName":"标准双人房","ghName":"银子浜客栈 ","contact":"小蔚子","discount":60,"useCoupons":6,"coupons":6,"ghId":"SPBH-20130728130","actPrice":117,"rmId":"5bc0811b-f737-11e2-9609-00163e020d45","area":"周庄","needDeposit":1,"days":1,"contPhone":"13798040239","notes":"本订单最多能用70张优惠劵，总优惠700元","totalPrice":190}
+				// {"limits":70,"rmCnt":1,"startDate":"2013-11-27","deposit":13,"depositRatio":10,"endDate":"2013-11-28","code":"200","rmName":"标准双人房","ghName":"银子浜客栈 ","contact":"小蔚子","discount":60,"useCoupons":6,"coupons":6,"ghId":"SPBH-20130728130","actPrice":117,"rmId":"5bc0811b-f737-11e2-9609-00163e020d45","area":"周庄","needDeposit":1,"days":1,"contPhone":"13798040239","notes":"本订单最多能用70张优惠劵，总优惠700元","totalPrice":190}
 				JSONObject json = (JSONObject) msg.obj;
 				try {
 					orderTotalText.setText(json.getString("totalPrice"));

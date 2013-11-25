@@ -73,96 +73,95 @@ public class HotelAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, final ViewGroup parent) {
 		ViewHolder holder = null;
-		// if (convertView == null) {
-		holder = new ViewHolder();
-		convertView = mInflater.inflate(R.layout.list_item_hotel, null);
-		holder.areaText = (TextView) convertView.findViewById(R.id.tv_area);
-		holder.hotel_nameText = (TextView) convertView.findViewById(R.id.tv_hotel_name);
-		holder.priceText = (TextView) convertView.findViewById(R.id.tv_price);
-		holder.order_amountText = (TextView) convertView.findViewById(R.id.tv_order_amount);
-		holder.star_amountText = (TextView) convertView.findViewById(R.id.tv_star_amount);
+		if (convertView == null) {
+			holder = new ViewHolder();
+			convertView = mInflater.inflate(R.layout.list_item_hotel, null);
+			holder.areaText = (TextView) convertView.findViewById(R.id.tv_area);
+			holder.hotel_nameText = (TextView) convertView.findViewById(R.id.tv_hotel_name);
+			holder.priceText = (TextView) convertView.findViewById(R.id.tv_price);
+			holder.order_amountText = (TextView) convertView.findViewById(R.id.tv_order_amount);
+			holder.star_amountText = (TextView) convertView.findViewById(R.id.tv_star_amount);
 
-		holder.labelView = (LinearLayout) convertView.findViewById(R.id.ll_label);
-		holder.bigView = (MyGridView) convertView.findViewById(R.id.gv_big_photo);
-		holder.smallView = (MyGridView) convertView.findViewById(R.id.gv_small_photo);
-		holder.avatarView = (MyGridView) convertView.findViewById(R.id.gv_avatar);
-		holder.coupon_photoView = (LinearLayout) convertView.findViewById(R.id.ll_coupon_photo);
-		holder.detailsImageView = (ImageView) convertView.findViewById(R.id.iv_details);
-		try {
-			final JSONObject item = list.getJSONObject(position);
+			holder.labelView = (LinearLayout) convertView.findViewById(R.id.ll_label);
+			holder.bigView = (MyGridView) convertView.findViewById(R.id.gv_big_photo);
+			holder.smallView = (MyGridView) convertView.findViewById(R.id.gv_small_photo);
+			holder.avatarView = (MyGridView) convertView.findViewById(R.id.gv_avatar);
+			holder.coupon_photoView = (LinearLayout) convertView.findViewById(R.id.ll_coupon_photo);
+			holder.detailsImageView = (ImageView) convertView.findViewById(R.id.iv_details);
+			try {
+				final JSONObject item = list.getJSONObject(position);
 
-			JSONArray labels = item.getJSONArray("label");
+				JSONArray labels = item.getJSONArray("label");
 
-			// int height=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, mContext.getResources().getDisplayMetrics());
-			LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			layoutParams.setMargins(0, 0, 10, 0);
-			for (int i = 0; i < labels.length(); i++) {
-				JSONObject temp = labels.getJSONObject(i);
-				String icon = temp.getString("icon");
-				for (String s : icon_lableHashMap.keySet()) {
-					if (s.equals(icon)) {
-						ImageView img = new ImageView(mContext);
-						img.setImageResource(icon_lableHashMap.get(s));
-						img.setLayoutParams(layoutParams);
-						holder.labelView.addView(img);
+				// int height=(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, mContext.getResources().getDisplayMetrics());
+				LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				layoutParams.setMargins(0, 0, 10, 0);
+				for (int i = 0; i < labels.length(); i++) {
+					JSONObject temp = labels.getJSONObject(i);
+					String icon = temp.getString("icon");
+					for (String s : icon_lableHashMap.keySet()) {
+						if (s.equals(icon)) {
+							ImageView img = new ImageView(mContext);
+							img.setImageResource(icon_lableHashMap.get(s));
+							img.setLayoutParams(layoutParams);
+							holder.labelView.addView(img);
+						}
 					}
+
 				}
 
-			}
-
-
-			JSONArray hotelImages = item.getJSONArray("imgs");
-			List<String> bigImages = new ArrayList<String>();
-			List<String> smallImages = new ArrayList<String>();
-			for (int i = 0; i < 3; i++) {
-				JSONObject temp = hotelImages.getJSONObject(i);
-				bigImages.add(temp.getString("mUrl"));
-			}
-			for (int i = 2; i < hotelImages.length(); i++) {
-				JSONObject temp = hotelImages.getJSONObject(i);
-				smallImages.add(temp.getString("mUrl"));
-			}
-			smallImages.add("menu");
-			String[] temp = new String[] {};
-			String urls[] = bigImages.toArray(temp);
-			String urls_2[] = smallImages.toArray(temp);
-
-			HotelImageAdapter adapter = new HotelImageAdapter(mContext, R.id.imageView1, urls, item);
-			holder.bigView.setAdapter(adapter);
-
-			HotelImageAdapter adapter2 = new HotelImageAdapter(mContext, R.id.imageView1, urls_2, item);
-			holder.smallView.setAdapter(adapter2);
-
-			JSONArray coupons = item.getJSONArray("coupon");
-			AvatarAdapter avatarAdapter = new AvatarAdapter(mContext, coupons);
-			holder.avatarView.setAdapter(avatarAdapter);
-
-			holder.areaText.setText("[" + item.getString("area") + "]");
-			holder.hotel_nameText.setText(item.getString("ghName"));
-			holder.priceText.setText(item.getString("price"));
-			holder.order_amountText.setText("ЖЉ(" + item.getString("orders") + ")");
-			holder.star_amountText.setText("до(" + item.getString("stars") + ")");
-
-			holder.detailsImageView.setTag(item);
-			holder.detailsImageView.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					// TODO Auto-generated method stub
-					Intent intent = new Intent(mContext, RoomListActivity.class);
-					intent.putExtra("json", item.toString());
-					mContext.startActivity(intent);
+				JSONArray hotelImages = item.getJSONArray("imgs");
+				List<String> bigImages = new ArrayList<String>();
+				List<String> smallImages = new ArrayList<String>();
+				for (int i = 0; i < 3; i++) {
+					JSONObject temp = hotelImages.getJSONObject(i);
+					bigImages.add(temp.getString("mUrl"));
 				}
-			});
+				for (int i = 2; i < hotelImages.length(); i++) {
+					JSONObject temp = hotelImages.getJSONObject(i);
+					smallImages.add(temp.getString("mUrl"));
+				}
+				smallImages.add("menu");
+				String[] temp = new String[] {};
+				String urls[] = bigImages.toArray(temp);
+				String urls_2[] = smallImages.toArray(temp);
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				HotelImageAdapter adapter = new HotelImageAdapter(mContext, R.id.imageView1, urls, item);
+				holder.bigView.setAdapter(adapter);
+
+				HotelImageAdapter adapter2 = new HotelImageAdapter(mContext, R.id.imageView1, urls_2, item);
+				holder.smallView.setAdapter(adapter2);
+
+				JSONArray coupons = item.getJSONArray("coupon");
+				AvatarAdapter avatarAdapter = new AvatarAdapter(mContext, coupons);
+				holder.avatarView.setAdapter(avatarAdapter);
+
+				holder.areaText.setText("[" + item.getString("area") + "]");
+				holder.hotel_nameText.setText(item.getString("ghName"));
+				holder.priceText.setText(item.getString("price"));
+				holder.order_amountText.setText("ЖЉ(" + item.getString("orders") + ")");
+				holder.star_amountText.setText("до(" + item.getString("stars") + ")");
+
+				holder.detailsImageView.setTag(item);
+				holder.detailsImageView.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						// TODO Auto-generated method stub
+						Intent intent = new Intent(mContext, RoomListActivity.class);
+						intent.putExtra("json", item.toString());
+						mContext.startActivity(intent);
+					}
+				});
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
 		}
-		// convertView.setTag(holder);
-		// } else {
-		// holder = (ViewHolder) convertView.getTag();
-		// }
 		return convertView;
 	}
 
