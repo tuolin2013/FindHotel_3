@@ -33,6 +33,7 @@ import com.actionbarsherlock.view.Window;
 import com.findhotel.R;
 import com.findhotel.adapter.ChoiceAdapter;
 import com.findhotel.adapter.HotelAdapter;
+import com.findhotel.cache.MyCache;
 import com.findhotel.util.CacheApplication;
 import com.findhotel.util.ExitApplication;
 import com.findhotel.util.MyActionMenu;
@@ -60,6 +61,7 @@ public class HotelListActivity extends SherlockActivity {
 	JSONArray datasource;
 	int pg_no = 1, pg_cnt;
 	boolean debugger = true;
+	CacheApplication mApplication;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -142,31 +144,22 @@ public class HotelListActivity extends SherlockActivity {
 	}
 
 	void loadData() {
-		// try {
-		// JSONObject json = new JSONObject(testJson);
-		// JSONArray datasource = json.getJSONArray("items");
-		// mAdapter = new HotelAdapter(mContext, datasource);
-		// mPullToRefreshListView.setAdapter(mAdapter);
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-
-		executorService.execute(new LoadRunnable());
-		// if (cacheApplication.getCache(category) == null) {
-		// executorService.execute(new LoadRunnable());
-		// } else {
-		// String cachedDatasource = cacheApplication.getCache(category);
-		// try {
-		// JSONObject jsObj = new JSONObject(cachedDatasource);
-		// datasource = jsObj.getJSONArray("items");
-		// mAdapter = new HotelAdapter(mContext, datasource);
-		// mPullToRefreshListView.setAdapter(mAdapter);
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
+		mApplication = (CacheApplication) getApplicationContext();
+		JSONObject cacheData = mApplication.getCache(category);
+		if (cacheData == null) {
+			executorService.execute(new LoadRunnable());
+		} else {
+			JSONArray datasource;
+			try {
+				datasource = cacheData.getJSONArray("items");
+				mAdapter = new HotelAdapter(mContext, datasource);
+				mPullToRefreshListView.setAdapter(mAdapter);
+				mAdapter.notifyDataSetChanged();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private void setActionbarTitle() {
@@ -209,10 +202,13 @@ public class HotelListActivity extends SherlockActivity {
 		if ("want_go".equals(category)) {
 
 		} else if ("friend_go".equals(category)) {
+			url = WEB_SERVER_URL + "/zzd/hotel/v1/friendFavor";
 		} else if ("professional_go".equals(category)) {
 			url = WEB_SERVER_URL + "/zzd/hotel/v1/popularList";
 		} else if ("fans_camp".equals(category)) {
+			url = WEB_SERVER_URL + "/zzd/hotel/v1/fansFavor";
 		} else if ("popularity".equals(category)) {
+			url = WEB_SERVER_URL + "/zzd/hotel/v1/topHotels";
 		} else {
 			url = WEB_SERVER_URL + "/zzd/hotel/v1/areaList";
 		}
@@ -225,13 +221,20 @@ public class HotelListActivity extends SherlockActivity {
 		if ("want_go".equals(category)) {
 
 		} else if ("friend_go".equals(category)) {
+			params.put("appId", "appid");
+			params.put("pg", pg_no + "");
+
 		} else if ("professional_go".equals(category)) {
 			params.put("appId", "appid");
 			params.put("ctg", getIntent().getStringExtra("ctg"));
 			params.put("pg", pg_no + "");
 
 		} else if ("fans_camp".equals(category)) {
+			params.put("appId", "appid");
+			params.put("pg", pg_no + "");
 		} else if ("popularity".equals(category)) {
+			params.put("appId", "appid");
+			params.put("pg", pg_no + "");
 		} else {
 			params.put("appId", "appid");
 			params.put("area", category);
@@ -248,6 +251,10 @@ public class HotelListActivity extends SherlockActivity {
 			// TODO Auto-generated method stub
 			Looper.prepare();
 			AsyncHttpClient client = new AsyncHttpClient();
+			if ("friend_go".equals(category)) {
+				client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+
+			}
 			client.post(HotelListActivity.this, creatUrl(), createParams(), new AsyncHttpResponseHandler() {
 
 				@Override
@@ -271,6 +278,7 @@ public class HotelListActivity extends SherlockActivity {
 					JSONObject jsObj;
 					try {
 						jsObj = new JSONObject(arg0);
+						mApplication.saveCahce(category, jsObj);
 						// pg_cnt = jsObj.getInt("pgCnt");
 						JSONArray array = jsObj.getJSONArray("items");
 						myHandler.obtainMessage(0, -1, -1, array).sendToTarget();

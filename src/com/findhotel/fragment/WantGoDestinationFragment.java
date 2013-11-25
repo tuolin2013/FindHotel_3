@@ -26,6 +26,7 @@ import com.findhotel.R;
 import com.findhotel.adapter.AreaAdapter;
 import com.findhotel.adapter.ChoiceAdapter;
 import com.findhotel.fragment.WantGoChoiceFragment.LoadRunnable;
+import com.findhotel.util.CacheApplication;
 import com.findhotel.util.ListViewUtility;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
@@ -44,6 +45,8 @@ public class WantGoDestinationFragment extends Fragment {
 	int page_count, page_no = 1;
 	String request_url = WEB_SERVER_URL + "/zzd/nav/v1/area";
 	ExecutorService executorService = Executors.newCachedThreadPool();
+	CacheApplication mCacheApplication;
+	String cacheKey = "com.findhotel.fragment.WantGoDestinationFragment";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -100,7 +103,22 @@ public class WantGoDestinationFragment extends Fragment {
 		// Toast.makeText(getActivity(), "json exception..", Toast.LENGTH_LONG).show();
 		// e.printStackTrace();
 		// }
-		executorService.execute(new LoadRunnable());
+		mCacheApplication = (CacheApplication) getActivity().getApplicationContext();
+		JSONObject cacheData = mCacheApplication.getCache(cacheKey);
+		if (cacheData == null) {
+			executorService.execute(new LoadRunnable());
+		} else {
+			try {
+				JSONArray data = cacheData.getJSONArray("items");
+				mAdapter = new AreaAdapter(getActivity(), data);
+				mPullRefreshListView.setAdapter(mAdapter);
+				ListViewUtility.setListViewHeightBasedOnChildren(mPullRefreshListView.getRefreshableView());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	public class LoadRunnable implements Runnable {
@@ -136,6 +154,7 @@ public class WantGoDestinationFragment extends Fragment {
 					try {
 						jsObj = new JSONObject(arg0);
 						// page_count = jsObj.getInt("pgCnt");
+						mCacheApplication.saveCahce(cacheKey, jsObj);
 						JSONArray array = jsObj.getJSONArray("items");
 						myHandler.obtainMessage(0, -1, -1, array).sendToTarget();
 

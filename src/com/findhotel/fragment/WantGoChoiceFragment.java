@@ -53,6 +53,8 @@ public class WantGoChoiceFragment extends Fragment {
 	ExecutorService executorService = Executors.newCachedThreadPool();
 	JSONArray datasource;
 	int page_count, page_no = 1;
+	String cacheKey = "com.findhotel.fragment.WantGoChoiceFragment";
+	CacheApplication mCacheApplication;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -103,8 +105,21 @@ public class WantGoChoiceFragment extends Fragment {
 	}
 
 	void loadData() {
+		mCacheApplication = (CacheApplication) getActivity().getApplicationContext();
+		JSONObject cacheData = mCacheApplication.getCache(cacheKey);
+		if (cacheData == null) {
+			executorService.execute(new LoadRunnable());
+		} else {
+			try {
+				JSONArray data = cacheData.getJSONArray("items");
+				mAdapter = new ChoiceAdapter(getActivity(), data);
+				mPullRefreshListView.setAdapter(mAdapter);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-		executorService.execute(new LoadRunnable());
+		}
 
 	}
 
@@ -153,6 +168,7 @@ public class WantGoChoiceFragment extends Fragment {
 					JSONObject jsObj;
 					try {
 						jsObj = new JSONObject(arg0);
+						mCacheApplication.saveCahce(cacheKey, jsObj);
 						page_count = jsObj.getInt("pgCnt");
 						JSONArray array = jsObj.getJSONArray("items");
 						myHandler.obtainMessage(0, -1, -1, array).sendToTarget();

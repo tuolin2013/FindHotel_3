@@ -310,8 +310,8 @@ public class CheckInInfoActivity extends SherlockActivity {
 		JSONObject obj;
 		try {
 			obj = new JSONObject(response);
-			// int coupon = obj.getInt("coupons");
-			int coupon = 20;
+			int coupon = obj.getInt("coupons");
+			// int coupon = 20;
 			int limits = obj.getInt("limits");
 			availableCoupon = coupon > limits ? limits : coupon;
 			usedCoupon = availableCoupon;
@@ -327,6 +327,11 @@ public class CheckInInfoActivity extends SherlockActivity {
 						couponText.setText(usedCoupon + "张");
 						int discount = usedCoupon * 10;
 						discountText.setText(discount + "");
+						int total = Integer.parseInt(orderTotalText.getText().toString());
+						int deposit = Integer.parseInt(depositText.getText().toString());
+						int cash = total - discount - deposit;
+						cashpayText.setText(cash + "");
+
 					}
 
 				}
@@ -343,6 +348,10 @@ public class CheckInInfoActivity extends SherlockActivity {
 						couponText.setText(usedCoupon + "张");
 						int discount = usedCoupon * 10;
 						discountText.setText(discount + "");
+						int total = Integer.parseInt(orderTotalText.getText().toString());
+						int deposit = Integer.parseInt(depositText.getText().toString());
+						int cash = total - discount - deposit;
+						cashpayText.setText(cash + "");
 					}
 
 				}
@@ -361,7 +370,21 @@ public class CheckInInfoActivity extends SherlockActivity {
 			try {
 				object = new JSONObject(response);
 				int total = object.getInt("totalPrice");
+				int needDeposit = object.getInt("needDeposit");
+				int discount = Integer.parseInt(discountText.getText().toString());
+				double depositRatio = object.getDouble("depositRatio");
+				int deposit = 0, cash;
 				int refresh = total * rmCnt;
+				if (needDeposit == 0) {
+					deposit = 0;
+				} else {
+					deposit = (int) ((refresh - discount) * depositRatio / 100);
+					depositText.setText(deposit + "");
+
+				}
+				cash = refresh - discount - deposit;
+				cashpayText.setText(cash + "");
+
 				orderTotalText.setText(refresh + "");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -433,6 +456,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0:
+				//{"limits":70,"rmCnt":1,"startDate":"2013-11-27","deposit":13,"depositRatio":10,"endDate":"2013-11-28","code":"200","rmName":"标准双人房","ghName":"银子浜客栈 ","contact":"小蔚子","discount":60,"useCoupons":6,"coupons":6,"ghId":"SPBH-20130728130","actPrice":117,"rmId":"5bc0811b-f737-11e2-9609-00163e020d45","area":"周庄","needDeposit":1,"days":1,"contPhone":"13798040239","notes":"本订单最多能用70张优惠劵，总优惠700元","totalPrice":190}
 				JSONObject json = (JSONObject) msg.obj;
 				try {
 					orderTotalText.setText(json.getString("totalPrice"));
@@ -512,12 +536,12 @@ public class CheckInInfoActivity extends SherlockActivity {
 			progressDialog.dismiss();
 			switch (msg.what) {
 			case 0:
-
 				String response = (String) msg.obj;
 				try {
 					JSONObject json = new JSONObject(response);
 					String code = json.getString("code");
-					String orderId = json.getString("orderId");
+					// String code = "200";
+					// String orderId = json.getString("orderId");
 					String message = "";
 					if ("200".equals(code)) {
 						message = "请求成功";
@@ -538,6 +562,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					showAlertMessage(e.getLocalizedMessage());
 				}
 
 				break;
