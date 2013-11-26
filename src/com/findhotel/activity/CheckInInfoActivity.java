@@ -66,7 +66,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 	TableLayout tableLayout;
 	JSONObject hotel, room;
 	String check_in_day, check_out_day;
-	String response = "";
+	String response = "", orderId = "";
 	int rmCnt = 0;
 	int availableCoupon, usedCoupon;
 	ExecutorService executorService = Executors.newCachedThreadPool();
@@ -403,7 +403,6 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 	class CalculateOrderRunnable implements Runnable {
 		RequestParams params;
-		
 
 		public CalculateOrderRunnable(RequestParams params) {
 			super();
@@ -536,6 +535,12 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 	}
 
+	private String getExtraString() {
+		JSONObject json = new JSONObject();
+		return json.toString();
+
+	}
+
 	private Handler saveOrderHandler = new Handler() {
 
 		@Override
@@ -548,11 +553,12 @@ public class CheckInInfoActivity extends SherlockActivity {
 					JSONObject json = new JSONObject(response);
 					String code = json.getString("code");
 					// String code = "200";
-					// String orderId = json.getString("orderId");
+					orderId = json.getString("orderId");
 					String message = "";
 					if ("200".equals(code)) {
 						message = "«Î«Û≥…π¶";
 						Intent intent = new Intent(CheckInInfoActivity.this, OrderDetails_State_ConfirmRoomActivity.class);
+						intent.putExtra("orderId", orderId);
 						startActivity(intent);
 
 					} else {
