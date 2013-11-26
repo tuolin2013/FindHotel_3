@@ -267,6 +267,13 @@ public class RoomListActivity extends SherlockActivity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent(mContext, MapGoogleNavigateActivity.class);
+				intent.putExtra("hotel", datasource.toString());
+				try {
+					intent.putExtra("name", hotel.getString("ghName"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				startActivity(intent);
 
 			}
@@ -750,7 +757,7 @@ public class RoomListActivity extends SherlockActivity {
 					}
 				});
 
-				final String rmId=item.getString("rmId");
+				final String rmId = item.getString("rmId");
 				holder.reservationsButton.setTag(item);
 				holder.reservationsButton.setOnClickListener(new OnClickListener() {
 
