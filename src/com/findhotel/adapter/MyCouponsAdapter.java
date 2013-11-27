@@ -5,22 +5,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.findhotel.R;
-import com.findhotel.activity.HotelListActivity;
 import com.findhotel.util.ListViewUtility;
-import com.findhotel.widget.FloatView;
 
 public class MyCouponsAdapter extends BaseAdapter {
 

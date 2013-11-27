@@ -359,7 +359,7 @@
                             android:id="@+id/tv_order_total"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="TextView"
+                            android:text="0"
                             android:textColor="#7d7d7d" />
                     </TableRow>
 
@@ -381,7 +381,7 @@
                             android:id="@+id/tv_order_discount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="TextView"
+                            android:text="0"
                             android:textColor="#7d7d7d" />
                     </TableRow>
 
@@ -403,7 +403,7 @@
                             android:id="@+id/tv_order_cash_pay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="TextView"
+                            android:text="0"
                             android:textColor="#7d7d7d" />
                     </TableRow>
 
@@ -425,7 +425,7 @@
                             android:id="@+id/tv_order_deposit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="TextView"
+                            android:text="0"
                             android:textColor="#7d7d7d" />
                     </TableRow>
                 </TableLayout>

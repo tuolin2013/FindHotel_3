@@ -132,6 +132,15 @@ public class CheckInInfoActivity extends SherlockActivity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent(CheckInInfoActivity.this, ExchangeCouponsActivity.class);
+				JSONObject obj;
+				try {
+					obj = new JSONObject(getIntent().getStringExtra("hotel"));
+					intent.putExtra("ghId", obj.getString("ghId"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 				startActivity(intent);
 
 			}

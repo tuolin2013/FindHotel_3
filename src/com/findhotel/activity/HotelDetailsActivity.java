@@ -18,6 +18,7 @@ import com.findhotel.R;
 import com.findhotel.adapter.HotelExperienceAdapter;
 import com.findhotel.adapter.WhyAdapter;
 import com.findhotel.util.ExitApplication;
+import com.findhotel.util.ListViewUtility;
 import com.findhotel.util.MyActionMenu;
 import com.findhotel.widget.MyGridView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -199,6 +200,7 @@ public class HotelDetailsActivity extends SherlockActivity {
 					JSONArray why = json.getJSONArray("who");
 					WhyAdapter whyAdapter = new WhyAdapter(mContext, why);
 					whyListView.setAdapter(whyAdapter);
+					ListViewUtility.setListViewHeightBasedOnChildren(whyListView);
 
 					final String phone = "tel:" + json.getString("custPhone");
 					telButton.setOnClickListener(new OnClickListener() {
