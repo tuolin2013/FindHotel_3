@@ -2,14 +2,12 @@ package com.findhotel.adapter;
 
 import static com.findhotel.constant.Constant.DEBUGGER;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.R.integer;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,7 +19,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,12 +30,15 @@ public class PopupWindowCouponsAdapter extends BaseAdapter {
 	private Context mContext;
 	private JSONArray list;
 	private Button exchangeButton;
+	private HashMap<String, String> exchageHashMap;
+	private boolean hasChange = false;
 
 	public PopupWindowCouponsAdapter(Context mContext, JSONArray list, Button button) {
 		this.mContext = mContext;
 		mInflater = LayoutInflater.from(this.mContext);
 		this.list = list;
 		this.exchangeButton = button;
+		exchageHashMap = new HashMap<String, String>();
 
 	}
 
@@ -85,6 +85,8 @@ public class PopupWindowCouponsAdapter extends BaseAdapter {
 			holder.couponNumText.setText("(" + jsonObject.getString("cnt") + "’≈)");
 			holder.nameText.setText(jsonObject.getString("ghName"));
 			holder.couponsEditText.setText(jsonObject.getString("cnt"));
+			// holder.couponsEditText.setText("0");
+			holder.couponsEditText.setTag(jsonObject.getString("ghId"));
 			final EditText couponsEditText = holder.couponsEditText;
 			final int max = jsonObject.getInt("cnt");
 
@@ -119,12 +121,13 @@ public class PopupWindowCouponsAdapter extends BaseAdapter {
 				@Override
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
 					// TODO Auto-generated method stub
+					hasChange = true;
 					int usageCnt = 0;
 					for (int i = 0; i < parent.getChildCount(); i++) {
 						EditText tempEditText = (EditText) parent.getChildAt(i).findViewById(R.id.etv_coupon);
 						int temp = Integer.parseInt(tempEditText.getText().toString());
 						usageCnt += temp;
-
+						setExchageValue(tempEditText.getTag().toString(), tempEditText.getText().toString());
 					}
 					exchangeButton.setText("∂“ªª" + usageCnt + "’≈");
 
@@ -157,7 +160,7 @@ public class PopupWindowCouponsAdapter extends BaseAdapter {
 		return convertView;
 	}
 
-	int getTotalCoupons() {
+	public int getTotalCoupons() {
 		int total = 0;
 		for (int i = 0; i < list.length(); i++) {
 			try {
@@ -170,6 +173,27 @@ public class PopupWindowCouponsAdapter extends BaseAdapter {
 			}
 		}
 		return total;
+
+	}
+
+	public HashMap<String, String> getExchageHashMap() {
+		if (hasChange == false) {
+			for (int i = 0; i < list.length(); i++) {
+				try {
+					JSONObject temp = list.getJSONObject(i);
+					exchageHashMap.put(temp.getString("ghId"), temp.getString("cnt"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}
+		return exchageHashMap;
+	}
+
+	private void setExchageValue(String ghId, String couponNum) {
+		exchageHashMap.put(ghId, couponNum);
 
 	}
 

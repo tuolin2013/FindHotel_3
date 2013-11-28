@@ -3,6 +3,7 @@ package com.findhotel.adapter;
 import static com.findhotel.constant.Constant.DEBUGGER;
 import static com.findhotel.constant.Constant.WEB_SERVER_URL;
 
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -10,8 +11,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
@@ -46,6 +51,7 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 	DisplayImageOptions options;
 	ExecutorService executorService = Executors.newCachedThreadPool();
 	ProgressDialog progressDialog;
+	HashMap<String, String> hashMap = new HashMap<String, String>();
 
 	public ExchangCouponsAdapter(Context mContext, JSONArray list) {
 		this.mContext = mContext;
@@ -166,6 +172,7 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 
 		@Override
 		public void handleMessage(Message msg) {
+
 			progressDialog.dismiss();
 			switch (msg.what) {
 			case 0:
@@ -184,6 +191,7 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 					JSONArray datasource = json.getJSONArray("coupon");
 					PopupWindowCouponsAdapter adapter = new PopupWindowCouponsAdapter(mContext, datasource, exchangeButton);
 					exchangeButton.setText("兑换" + adapter.getTotalCoupons() + "张");
+					hashMap = adapter.getExchageHashMap();
 					mListView.setAdapter(adapter);
 					adapter.notifyDataSetChanged();
 					mPopupWindow.showAsDropDown(targetView);
@@ -197,7 +205,27 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
+						String ghId = "", cnt = "";
+						for (String key : hashMap.keySet()) {
+							ghId += key + ",";
+							cnt += hashMap.get(key) + ",";
 
+						}
+
+						new AlertDialog.Builder(mContext).setTitle("系统消息").setMessage(ghId + " and " + cnt)
+								.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										// TODO Auto-generated method stub
+										Intent intent = new Intent();
+										intent.putExtra("exra", hashMap);
+										((Activity) mContext).setResult(Activity.RESULT_OK, intent);
+										((Activity) mContext).finish();
+										dialog.dismiss();
+
+									}
+								}).show();
 					}
 				});
 

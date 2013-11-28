@@ -36,10 +36,12 @@
             android:text="住过的" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lv_order"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        android:id="@+id/pull_to_refresh_listview_order"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.9"
+        android:divider="@null" >
+    </com.handmark.pulltorefresh.library.PullToRefreshListView>
 
 </LinearLayout>

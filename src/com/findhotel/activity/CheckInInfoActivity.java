@@ -1,17 +1,20 @@
 package com.findhotel.activity;
 
 import static com.findhotel.constant.Constant.WEB_SERVER_URL;
+import static com.findhotel.constant.Constant.DEBUGGER;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -71,7 +74,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 	int availableCoupon, usedCoupon;
 	ExecutorService executorService = Executors.newCachedThreadPool();
 	ProgressDialog progressDialog;
-	boolean debugger = true;
+	public static final int REQUEST_COUPON_CODE = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +105,30 @@ public class CheckInInfoActivity extends SherlockActivity {
 			finish();
 		}
 		return false;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		if (resultCode != Activity.RESULT_OK)
+			return;
+		switch (requestCode) {
+		case REQUEST_COUPON_CODE:
+			HashMap<String, String> hashMap = (HashMap<String, String>) data.getSerializableExtra("exra");
+			String ghId = "";
+			for (String key : hashMap.keySet()) {
+				ghId += key + ",";
+
+			}
+			Toast.makeText(mContext, ghId, Toast.LENGTH_LONG).show();
+
+			break;
+
+		default:
+			break;
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	void initView() {
@@ -136,12 +163,11 @@ public class CheckInInfoActivity extends SherlockActivity {
 				try {
 					obj = new JSONObject(getIntent().getStringExtra("hotel"));
 					intent.putExtra("ghId", obj.getString("ghId"));
+					startActivityForResult(intent, REQUEST_COUPON_CODE);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-				startActivity(intent);
 
 			}
 		});
@@ -428,14 +454,14 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 				@Override
 				public void onFailure(Throwable arg0, String arg1) {
-					if (debugger) {
+					if (DEBUGGER) {
 						Toast.makeText(mContext, arg1, Toast.LENGTH_LONG).show();
 					}
 				}
 
 				@Override
 				public void onStart() {
-					if (debugger) {
+					if (DEBUGGER) {
 						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
 					}
 					super.onStart();
@@ -443,7 +469,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 				@Override
 				public void onSuccess(final String arg0) {
-					if (debugger) {
+					if (DEBUGGER) {
 						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
 					}
 					try {
@@ -453,7 +479,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						if (debugger) {
+						if (DEBUGGER) {
 							Toast.makeText(mContext, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 						}
 						calculateHandler.sendEmptyMessage(1);
@@ -515,14 +541,14 @@ public class CheckInInfoActivity extends SherlockActivity {
 				@Override
 				public void onFailure(Throwable arg0, String arg1) {
 					progressDialog.dismiss();
-					if (debugger) {
+					if (DEBUGGER) {
 						Toast.makeText(mContext, arg1, Toast.LENGTH_LONG).show();
 					}
 				}
 
 				@Override
 				public void onStart() {
-					if (debugger) {
+					if (DEBUGGER) {
 						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
 					}
 					progressDialog = ProgressDialog.show(CheckInInfoActivity.this, null, "正在处理，请稍候...", true, false);
@@ -531,7 +557,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 				@Override
 				public void onSuccess(final String arg0) {
-					if (debugger) {
+					if (DEBUGGER) {
 						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
 					}
 					saveOrderHandler.obtainMessage(0, -1, -1, arg0).sendToTarget();
