@@ -59,7 +59,7 @@ public class MyOrderActivity extends SherlockActivity {
 	Context mContext = MyOrderActivity.this;
 	ExecutorService executorService = Executors.newCachedThreadPool();
 	ProgressDialog progressDialog;
-	String orderType = "DRZ";
+	String orderType = "QRZ";
 	int page_no = 1;
 	int page_count = 0;
 
@@ -164,22 +164,24 @@ public class MyOrderActivity extends SherlockActivity {
 			v.setBackgroundResource(R.drawable.btn_bg_line);
 			((Button) v).setTextColor(Color.parseColor("#FF7400"));
 
-			// 等待入住
-			if ("DRZ".equals(tag)) {
-				Intent intent = new Intent(MyOrderActivity.this, OrderDetails_State_WaitCheckInActivity.class);
-				startActivity(intent);
-
-				// 已入住
-			} else if ("YRZ".equals(tag)) {
-				Intent intent = new Intent(MyOrderActivity.this, OrderDetails_State_CheckedActivity.class);
-				startActivity(intent);
-
-				// 预订中
-			} else if ("YDZ".equals(tag)) {
-				Intent intent = new Intent(MyOrderActivity.this, OrderDetails_State_ConfirmRoomActivity.class);
-				startActivity(intent);
-
-			}
+			executorService.execute(new LoadOrderRunnable(orderType, "1"));
+			//
+			// // 等待入住
+			// if ("DRZ".equals(tag)) {
+			// Intent intent = new Intent(MyOrderActivity.this, OrderDetails_State_WaitCheckInActivity.class);
+			// startActivity(intent);
+			//
+			// // 已入住
+			// } else if ("YRZ".equals(tag)) {
+			// Intent intent = new Intent(MyOrderActivity.this, OrderDetails_State_CheckedActivity.class);
+			// startActivity(intent);
+			//
+			// // 预订中
+			// } else if ("YDZ".equals(tag)) {
+			// Intent intent = new Intent(MyOrderActivity.this, OrderDetails_State_ConfirmRoomActivity.class);
+			// startActivity(intent);
+			//
+			// }
 
 		}
 	};
@@ -199,7 +201,7 @@ public class MyOrderActivity extends SherlockActivity {
 			String type = params[0];
 			String pg = params[1];
 			AsyncHttpClient client = new AsyncHttpClient();
-			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/myOrders";
+			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/myOrder";
 			final RequestParams params1 = new RequestParams();
 			params1.put("appId", "appId");
 			params1.put("status", type);
@@ -269,7 +271,7 @@ public class MyOrderActivity extends SherlockActivity {
 		@Override
 		public void run() {
 			Looper.prepare();
-			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/myOrders";
+			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/myOrder";
 			AsyncHttpClient client = new AsyncHttpClient();
 			final RequestParams params = new RequestParams();
 			params.put("appId", "appId");
@@ -341,7 +343,7 @@ public class MyOrderActivity extends SherlockActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
 						dialog.dismiss();
-						finish();
+						//finish();
 
 					}
 				}).show();

@@ -13,7 +13,7 @@
             android:layout_height="40sp"
             android:layout_weight="0.3"
             android:background="@drawable/btn_bg_line"
-            android:tag="YDZ"
+            android:tag="QRZ"
             android:text="预订中"
             android:textColor="@color/orange" />
 

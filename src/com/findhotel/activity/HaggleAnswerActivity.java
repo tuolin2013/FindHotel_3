@@ -1,12 +1,25 @@
 package com.findhotel.activity;
 
+import static com.findhotel.constant.Constant.DEBUGGER;
+import static com.findhotel.constant.Constant.WEB_SERVER_URL;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,16 +38,23 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.findhotel.R;
 import com.findhotel.util.ExitApplication;
+import com.findhotel.util.MyActionMenu;
 import com.findhotel.widget.SquareImageView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class HaggleAnswerActivity extends SherlockActivity {
 	SlidingMenu menu;
 	ListView mListView;
+	TextView areaText, priceText, check_in_dateText, check_in_dayText, check_out_dateText, check_out_dayText, roomTypeText, roomNumText;
 	String selectId = "";
 	Context mContext = HaggleAnswerActivity.this;
+	ExecutorService executorService = Executors.newCachedThreadPool();
+	ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,30 +62,46 @@ public class HaggleAnswerActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		ExitApplication.getInstance().addActivity(HaggleAnswerActivity.this);
 		setContentView(R.layout.activity_haggle_answer);
+		menu = new MyActionMenu(HaggleAnswerActivity.this).initView();
 		initView();
+		RequestParams params = new RequestParams();
+		params.put("appId", "appId");
+		params.put("orderId", getIntent().getStringExtra("orderId"));
+		executorService.execute(new LoadAnswerDetailsRunnable(params));
+
 	}
 
 	void initView() {
 		// TODO Auto-generated method stub
 		initActionBar();
 		mListView = (ListView) findViewById(R.id.lv_answer);
-		String testJson = "{orderId:2013405005-33433,area:西塘,price:130,startDate:2013-10-10,endDate:2013-10-11,rmType:DC,rmCnt:1,resp:[{ordId:2012020334,ghName:留香居客栈,url:www.zhaozhude.comimage,addService:增值服务},{ordId:2012020332,ghName:小桥流水旅馆,url:www.zhaozhude.comimage,addService:增值服务2},{ordId:2012020330,ghName:月圆人家,url:www.zhaozhude.comimage,addService:增值服务3}]}";
-		try {
-			JSONObject object = new JSONObject(testJson);
-			JSONArray datasource = object.getJSONArray("resp");
-			HanggleAnswerAdaper adapter = new HanggleAnswerAdaper(datasource);
-			mListView.setAdapter(adapter);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		areaText = (TextView) findViewById(R.id.tv_area);
+		priceText = (TextView) findViewById(R.id.tv_price);
+		check_in_dateText = (TextView) findViewById(R.id.tv_check_in_date);
+		check_in_dayText = (TextView) findViewById(R.id.tv_check_in_day);
+		check_out_dateText = (TextView) findViewById(R.id.tv_check_out_date);
+		check_out_dayText = (TextView) findViewById(R.id.tv_check_out_day);
+		roomTypeText = (TextView) findViewById(R.id.tv_room_type);
+		roomNumText = (TextView) findViewById(R.id.tv_room_num);
+
+		// String testJson =
+		// "{orderId:2013405005-33433,area:西塘,price:130,startDate:2013-10-10,endDate:2013-10-11,rmType:DC,rmCnt:1,resp:[{ordId:2012020334,ghName:留香居客栈,url:www.zhaozhude.comimage,addService:增值服务},{ordId:2012020332,ghName:小桥流水旅馆,url:www.zhaozhude.comimage,addService:增值服务2},{ordId:2012020330,ghName:月圆人家,url:www.zhaozhude.comimage,addService:增值服务3}]}";
+		// try {
+		// JSONObject object = new JSONObject(testJson);
+		// JSONArray datasource = object.getJSONArray("resp");
+		// HanggleAnswerAdaper adapter = new HanggleAnswerAdaper(datasource);
+		// mListView.setAdapter(adapter);
+		// } catch (JSONException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
-		// menu.add("更多").setIcon(R.drawable.ic_drawer_dark)
-		// .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		menu.add("更多").setIcon(R.drawable.ic_drawer_dark)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -82,7 +118,7 @@ public class HaggleAnswerActivity extends SherlockActivity {
 	}
 
 	void initActionBar() {
-		String title = getResources().getString(R.string.title_activity_check_in_info);
+		String title = "旅馆接飙了";
 		ActionBar bar = getSupportActionBar();
 		// actionBar.setDisplayHomeAsUpEnabled(true);
 		bar.setHomeButtonEnabled(true);
@@ -98,6 +134,109 @@ public class HaggleAnswerActivity extends SherlockActivity {
 		bar.setDisplayShowCustomEnabled(true);
 
 	}
+
+	class LoadAnswerDetailsRunnable implements Runnable {
+		RequestParams params;
+
+		public LoadAnswerDetailsRunnable(RequestParams params) {
+			super();
+			this.params = params;
+		}
+
+		@Override
+		public void run() {
+			Looper.prepare();
+
+			String webUrl = WEB_SERVER_URL + "/zzd/coupon/v1/viewBidding";
+
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable arg0, String arg1) {
+					progressDialog.dismiss();
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg1, Toast.LENGTH_LONG).show();
+					}
+				}
+
+				@Override
+				public void onStart() {
+					if (DEBUGGER) {
+						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
+					}
+					progressDialog = ProgressDialog.show(mContext, null, "正在处理，请稍候...", true, false);
+					super.onStart();
+				}
+
+				@Override
+				public void onSuccess(final String arg0) {
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
+					loadHandler.obtainMessage(0, -1, -1, arg0).sendToTarget();
+
+				}
+			});
+			Looper.loop();
+
+		}
+
+	}
+
+	private Handler loadHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			progressDialog.dismiss();
+
+			switch (msg.what) {
+			case 0:
+				String result = (String) msg.obj;
+				try {
+					JSONObject json = new JSONObject(result);
+					JSONArray datasource = json.getJSONArray("resp");
+					areaText.setText(json.getString("area"));
+					priceText.setText(json.getString("price"));
+					SimpleDateFormat sdf_1 = new SimpleDateFormat("MM月dd日");
+					SimpleDateFormat sdf_2 = new SimpleDateFormat("yy年，EE");
+					SimpleDateFormat sdf_3 = new SimpleDateFormat("yyyy/MM/dd");
+					SimpleDateFormat sdf_4 = new SimpleDateFormat("yyyy-MM-dd");
+					String start = json.getString("startDate");
+					String end = json.getString("endDate");
+					try {
+						Date startDate = sdf_4.parse(start);
+						Date endDate = sdf_4.parse(end);
+						check_in_dateText.setText(sdf_1.format(startDate));
+						check_in_dayText.setText(sdf_2.format(startDate));
+						check_out_dateText.setText(sdf_1.format(endDate));
+						check_in_dayText.setText(sdf_2.format(endDate));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					String roomType = json.getString("rmType");
+					roomTypeText.setText(roomType);
+					roomNumText.setText(json.getString("rmCnt"));
+
+					HanggleAnswerAdaper adapter = new HanggleAnswerAdaper(datasource);
+					mListView.setAdapter(adapter);
+					adapter.notifyDataSetChanged();
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+	};
 
 	class HanggleAnswerAdaper extends BaseAdapter {
 		JSONArray data;

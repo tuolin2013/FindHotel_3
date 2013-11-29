@@ -51,7 +51,7 @@
                     android:src="@drawable/about_navigation" />
 
                 <TextView
-                    android:id="@+id/textView1"
+                    android:id="@+id/tv_area"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"
@@ -64,7 +64,7 @@
                     android:text="发飙价" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/tv_price"
                     android:layout_width="50sp"
                     android:layout_height="wrap_content"
                     android:text="180" />
@@ -165,13 +165,13 @@
                     android:src="@drawable/icon_singleroom" />
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/tv_room_type"
                     android:layout_width="100sp"
                     android:layout_height="wrap_content"
                     android:text="大床" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/tv_room_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1间" />
