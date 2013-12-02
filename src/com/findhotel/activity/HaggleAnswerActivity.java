@@ -50,7 +50,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class HaggleAnswerActivity extends SherlockActivity {
 	SlidingMenu menu;
 	ListView mListView;
-	TextView areaText, priceText, check_in_dateText, check_in_dayText, check_out_dateText, check_out_dayText, roomTypeText, roomNumText;
+	TextView topDescText, areaText, priceText, check_in_dateText, check_in_dayText, check_out_dateText, check_out_dayText, roomTypeText,
+			roomNumText;
 	String selectId = "";
 	Context mContext = HaggleAnswerActivity.this;
 	ExecutorService executorService = Executors.newCachedThreadPool();
@@ -83,6 +84,7 @@ public class HaggleAnswerActivity extends SherlockActivity {
 		check_out_dayText = (TextView) findViewById(R.id.tv_check_out_day);
 		roomTypeText = (TextView) findViewById(R.id.tv_room_type);
 		roomNumText = (TextView) findViewById(R.id.tv_room_num);
+		topDescText = (TextView) findViewById(R.id.tv_top_desc);
 
 		// String testJson =
 		// "{orderId:2013405005-33433,area:西塘,price:130,startDate:2013-10-10,endDate:2013-10-11,rmType:DC,rmCnt:1,resp:[{ordId:2012020334,ghName:留香居客栈,url:www.zhaozhude.comimage,addService:增值服务},{ordId:2012020332,ghName:小桥流水旅馆,url:www.zhaozhude.comimage,addService:增值服务2},{ordId:2012020330,ghName:月圆人家,url:www.zhaozhude.comimage,addService:增值服务3}]}";
@@ -147,7 +149,7 @@ public class HaggleAnswerActivity extends SherlockActivity {
 		public void run() {
 			Looper.prepare();
 
-			String webUrl = WEB_SERVER_URL + "/zzd/coupon/v1/viewBidding";
+			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/viewBidding";
 
 			AsyncHttpClient client = new AsyncHttpClient();
 			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
@@ -212,7 +214,7 @@ public class HaggleAnswerActivity extends SherlockActivity {
 						check_in_dateText.setText(sdf_1.format(startDate));
 						check_in_dayText.setText(sdf_2.format(startDate));
 						check_out_dateText.setText(sdf_1.format(endDate));
-						check_in_dayText.setText(sdf_2.format(endDate));
+						check_out_dayText.setText(sdf_2.format(endDate));
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -224,6 +226,8 @@ public class HaggleAnswerActivity extends SherlockActivity {
 					HanggleAnswerAdaper adapter = new HanggleAnswerAdaper(datasource);
 					mListView.setAdapter(adapter);
 					adapter.notifyDataSetChanged();
+
+					topDescText.setText("有" + datasource.length() + "个旅馆很想邀你入住，请尽快选择，以免预订的房间被售空。");
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -316,6 +320,10 @@ public class HaggleAnswerActivity extends SherlockActivity {
 
 					}
 				});
+				holder.nameText.setText(item.getString("ghName"));
+				mLoader.displayImage(item.getString("url"), holder.imageView);
+				// holder.priceText.setText(item.getString(""));
+				// holder.discountText.setText(item.getString(""));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				Toast.makeText(mContext, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();

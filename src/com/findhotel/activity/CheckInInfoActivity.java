@@ -48,9 +48,11 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.findhotel.R;
+import com.findhotel.entity.ExchangeCouponPostParameter;
 import com.findhotel.util.DateUtil;
 import com.findhotel.util.ExitApplication;
 import com.findhotel.util.MyActionMenu;
+import com.google.gson.Gson;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -114,13 +116,19 @@ public class CheckInInfoActivity extends SherlockActivity {
 			return;
 		switch (requestCode) {
 		case REQUEST_COUPON_CODE:
-			HashMap<String, String> hashMap = (HashMap<String, String>) data.getSerializableExtra("exra");
-			String ghId = "";
-			for (String key : hashMap.keySet()) {
-				ghId += key + ",";
+			String json = data.getStringExtra("extra");
+			Gson gson = new Gson();
+			ExchangeCouponPostParameter parameter = gson.fromJson(json, ExchangeCouponPostParameter.class);
+			try {
+				JSONObject obj = new JSONObject(getIntent().getStringExtra("hotel"));
+				parameter.setExchGhId(obj.getString("ghId"));
 
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			Toast.makeText(mContext, ghId, Toast.LENGTH_LONG).show();
+
+			executorService.execute(new ExchangeCouponRunnable(parameter));
 
 			break;
 
@@ -621,6 +629,79 @@ public class CheckInInfoActivity extends SherlockActivity {
 		}
 
 	};
+
+	class ExchangeCouponRunnable implements Runnable {
+		ExchangeCouponPostParameter parameter;
+		RequestParams params;
+
+		public ExchangeCouponRunnable(ExchangeCouponPostParameter parameter) {
+			super();
+			this.parameter = parameter;
+			params = new RequestParams();
+			params.put("appId", parameter.getAppId());
+			params.put("ghId", parameter.getGhId());
+			params.put("cnt", parameter.getCnt());
+			params.put("exchUserId", parameter.getExchUserId());
+			params.put("exchCnt", parameter.getExchCnt());
+			params.put("exchGhId", parameter.getExchGhId());
+
+		}
+
+		@Override
+		public void run() {
+			Looper.prepare();
+
+			String webUrl = WEB_SERVER_URL + "/zzd/coupon/v1/exchangeMyCoupon";
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable arg0, String arg1) {
+					progressDialog.dismiss();
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg1, Toast.LENGTH_LONG).show();
+					}
+				}
+
+				@Override
+				public void onStart() {
+					if (DEBUGGER) {
+						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
+					}
+					progressDialog = ProgressDialog.show(CheckInInfoActivity.this, null, "正在处理，请稍候...", true, false);
+					super.onStart();
+				}
+
+				@Override
+				public void onSuccess(final String arg0) {
+					progressDialog.dismiss();
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
+
+					try {
+						JSONObject obj = new JSONObject(arg0);
+						String code = obj.getString("code");
+
+						if ("200".equals(code)) {
+							couponText.setText(parameter.getExchCnt() + "张");
+
+						} else {
+							showAlertMessage("兑换失败！");
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+			});
+			Looper.loop();
+
+		}
+
+	}
 
 	private void showAlertMessage(String message) {
 		new AlertDialog.Builder(mContext).setTitle("系统消息").setMessage(message)

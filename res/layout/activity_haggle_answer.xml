@@ -1,196 +1,198 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout1"
-    android:layout_width="fill_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fefce3"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_top_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#fefce3"
-            android:orientation="vertical" >
+            android:layout_margin="5sp"
+            android:text="有3个"
+            android:textColor="#ff9236"
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/tv_titel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5sp"
-                android:text="有3个"
-                android:textColor="#ff9236"
-                android:textSize="16sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#ffca9c"
-                android:layerType="software" />
-        </LinearLayout>
-
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/card_border_round_corner"
-            android:orientation="vertical" >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center|left" >
-
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="36sp"
-                    android:layout_height="36sp"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/about_navigation" />
-
-                <TextView
-                    android:id="@+id/tv_area"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
-                    android:text="TextView" />
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="100sp"
-                    android:layout_height="wrap_content"
-                    android:text="发飙价" />
-
-                <TextView
-                    android:id="@+id/tv_price"
-                    android:layout_width="50sp"
-                    android:layout_height="wrap_content"
-                    android:text="180" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center|left" >
-
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="36sp"
-                    android:layout_height="36sp"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/icon_b_calendar" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.1"
-                    android:text="入住" />
-
-                <LinearLayout
-                    android:id="@+id/ll_check_in_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
-                    android:background="@drawable/custom_view_click"
-                    android:clickable="true"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/tv_check_in_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="09月30日"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tv_check_in_day"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="13年，星期五"
-                        android:textColor="#7d7d7d"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.1"
-                    android:text="离店" />
-
-                <LinearLayout
-                    android:id="@+id/ll_check_out_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
-                    android:background="@drawable/custom_view_click"
-                    android:clickable="true"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/tv_check_out_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="09月30日"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tv_check_out_day"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="13年，星期五"
-                        android:textColor="#7d7d7d"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/arrow" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center|left" >
-
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="36sp"
-                    android:layout_height="36sp"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/icon_singleroom" />
-
-                <TextView
-                    android:id="@+id/tv_room_type"
-                    android:layout_width="100sp"
-                    android:layout_height="wrap_content"
-                    android:text="大床" />
-
-                <TextView
-                    android:id="@+id/tv_room_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1间" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <ListView
-            android:id="@+id/lv_answer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/card_border_round_corner" >
-        </ListView>
+            android:layout_height="1dp"
+            android:background="#ffca9c"
+            android:layerType="software" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
+        android:layout_margin="10dp"
+        android:background="@drawable/card_border_round_corner"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|left" >
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="36sp"
+                android:layout_height="36sp"
+                android:layout_margin="10dp"
+                android:src="@drawable/about_navigation" />
+
+            <TextView
+                android:id="@+id/tv_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="100sp"
+                android:layout_height="wrap_content"
+                android:text="发飙价" />
+
+            <TextView
+                android:id="@+id/tv_price"
+                android:layout_width="50sp"
+                android:layout_height="wrap_content"
+                android:text="180" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_margin="5dp"
+            android:background="#e5e5e5"
+            android:layerType="software" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|left" >
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="36sp"
+                android:layout_height="36sp"
+                android:layout_margin="10dp"
+                android:src="@drawable/icon_b_calendar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="入住" />
+
+            <LinearLayout
+                android:id="@+id/ll_check_in_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:background="@drawable/custom_view_click"
+                android:clickable="true"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_check_in_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="09月30日"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_check_in_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="13年，星期五"
+                    android:textColor="#7d7d7d"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="离店" />
+
+            <LinearLayout
+                android:id="@+id/ll_check_out_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:background="@drawable/custom_view_click"
+                android:clickable="true"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_check_out_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="09月30日"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_check_out_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="13年，星期五"
+                    android:textColor="#7d7d7d"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:layout_margin="5dp"
+            android:background="#e5e5e5"
+            android:layerType="software" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|left" >
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="36sp"
+                android:layout_height="36sp"
+                android:layout_margin="10dp"
+                android:src="@drawable/icon_singleroom" />
+
+            <TextView
+                android:id="@+id/tv_room_type"
+                android:layout_width="100sp"
+                android:layout_height="wrap_content"
+                android:text="大床" />
+
+            <TextView
+                android:id="@+id/tv_room_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1间" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_weight="0.9"
+        android:background="@drawable/card_border_round_corner" >
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
         <Button
             android:id="@+id/button1"
@@ -215,4 +217,4 @@
             android:textSize="24sp" />
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

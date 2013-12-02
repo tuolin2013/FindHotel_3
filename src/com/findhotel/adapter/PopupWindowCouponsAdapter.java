@@ -69,23 +69,26 @@ public class PopupWindowCouponsAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, final ViewGroup parent) {
 		ViewHolder holder = null;
-		// if (convertView == null) {
-		holder = new ViewHolder();
-		convertView = mInflater.inflate(R.layout.list_item_my_coupons_popup, null);
-		holder.areaText = (TextView) convertView.findViewById(R.id.tv_area);
-		holder.couponNumText = (TextView) convertView.findViewById(R.id.tv_coupon_num);
-		holder.nameText = (TextView) convertView.findViewById(R.id.tv_hotel_name);
-		holder.plusImage = (ImageView) convertView.findViewById(R.id.iv_plus);
-		holder.minusImage = (ImageView) convertView.findViewById(R.id.iv_minus);
-		holder.couponsEditText = (EditText) convertView.findViewById(R.id.etv_coupon);
-
+//		if (convertView == null) {
+			holder = new ViewHolder();
+			convertView = mInflater.inflate(R.layout.list_item_my_coupons_popup, null);
+			holder.areaText = (TextView) convertView.findViewById(R.id.tv_area);
+			holder.couponNumText = (TextView) convertView.findViewById(R.id.tv_coupon_num);
+			holder.nameText = (TextView) convertView.findViewById(R.id.tv_hotel_name);
+			holder.plusImage = (ImageView) convertView.findViewById(R.id.iv_plus);
+			holder.minusImage = (ImageView) convertView.findViewById(R.id.iv_minus);
+			holder.couponsEditText = (EditText) convertView.findViewById(R.id.etv_coupon);
+			convertView.setTag(holder);
+		// } else {
+		// holder = (ViewHolder) convertView.getTag();
+		// }
 		try {
 			JSONObject jsonObject = list.getJSONObject(position);
 			holder.areaText.setText("[" + jsonObject.getString("area") + "]");
 			holder.couponNumText.setText("(" + jsonObject.getString("cnt") + "уе)");
 			holder.nameText.setText(jsonObject.getString("ghName"));
-			holder.couponsEditText.setText(jsonObject.getString("cnt"));
-			// holder.couponsEditText.setText("0");
+			// holder.couponsEditText.setText(jsonObject.getString("cnt"));
+			holder.couponsEditText.setText("0");
 			holder.couponsEditText.setTag(jsonObject.getString("ghId"));
 			final EditText couponsEditText = holder.couponsEditText;
 			final int max = jsonObject.getInt("cnt");
@@ -153,10 +156,7 @@ public class PopupWindowCouponsAdapter extends BaseAdapter {
 				Toast.makeText(mContext, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 			}
 		}
-		// convertView.setTag(holder);
-		// } else {
-		// holder = (ViewHolder) convertView.getTag();
-		// }
+
 		return convertView;
 	}
 

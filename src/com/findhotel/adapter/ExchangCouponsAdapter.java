@@ -35,6 +35,9 @@ import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.findhotel.R;
+import com.findhotel.entity.ExchangeCouponPostParameter;
+import com.findhotel.util.ListViewUtility;
+import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -52,6 +55,7 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 	ExecutorService executorService = Executors.newCachedThreadPool();
 	ProgressDialog progressDialog;
 	HashMap<String, String> hashMap = new HashMap<String, String>();
+	JSONObject chooseJson;
 
 	public ExchangCouponsAdapter(Context mContext, JSONArray list) {
 		this.mContext = mContext;
@@ -89,15 +93,18 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, final ViewGroup parent) {
 		ViewHolder holder = null;
-		// if (convertView == null) {
-		holder = new ViewHolder();
-		convertView = mInflater.inflate(R.layout.list_item_coupons, null);
-		holder.couponsImage = (ImageView) convertView.findViewById(R.id.iv_coupons);
-		holder.avatarImage = (ImageView) convertView.findViewById(R.id.iv_user_avatar);
-		holder.mobileText = (TextView) convertView.findViewById(R.id.tv_mobile);
-		holder.countText = (TextView) convertView.findViewById(R.id.tv_count);
-		holder.exchageButton = (Button) convertView.findViewById(R.id.btn_exchange);
-
+		if (convertView == null) {
+			holder = new ViewHolder();
+			convertView = mInflater.inflate(R.layout.list_item_coupons, null);
+			holder.couponsImage = (ImageView) convertView.findViewById(R.id.iv_coupons);
+			holder.avatarImage = (ImageView) convertView.findViewById(R.id.iv_user_avatar);
+			holder.mobileText = (TextView) convertView.findViewById(R.id.tv_mobile);
+			holder.countText = (TextView) convertView.findViewById(R.id.tv_count);
+			holder.exchageButton = (Button) convertView.findViewById(R.id.btn_exchange);
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
 		try {
 			JSONObject jsonObject = list.getJSONObject(position);
 			holder.mobileText.setText(jsonObject.getString("phone"));
@@ -105,11 +112,13 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 
 			mLoader.displayImage(jsonObject.getString("photoUrl"), holder.avatarImage, options);
 
+			holder.exchageButton.setTag(jsonObject);
 			holder.exchageButton.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
+					chooseJson = (JSONObject) v.getTag();
 					targetView = v;
 					executorService.execute(new LoadMyCouponRunnable());
 				}
@@ -119,10 +128,7 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// convertView.setTag(holder);
-		// } else {
-		// holder = (ViewHolder) convertView.getTag();
-		// }
+
 		return convertView;
 	}
 
@@ -190,11 +196,10 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 					JSONObject json = new JSONObject(result);
 					JSONArray datasource = json.getJSONArray("coupon");
 					PopupWindowCouponsAdapter adapter = new PopupWindowCouponsAdapter(mContext, datasource, exchangeButton);
-					exchangeButton.setText("兑换" + adapter.getTotalCoupons() + "张");
 					hashMap = adapter.getExchageHashMap();
 					mListView.setAdapter(adapter);
-					adapter.notifyDataSetChanged();
 					mPopupWindow.showAsDropDown(targetView);
+					exchangeButton.setText("兑换 0 张");
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -206,26 +211,30 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						String ghId = "", cnt = "";
+						String extra = null;
 						for (String key : hashMap.keySet()) {
 							ghId += key + ",";
 							cnt += hashMap.get(key) + ",";
-
 						}
+						try {
+							ExchangeCouponPostParameter parameter = new ExchangeCouponPostParameter();
+							parameter.setAppId("appId");
+							parameter.setCnt(cnt);
+							parameter.setExchCnt(chooseJson.getString("cnt"));
+							// parameter.setExchGhId(chooseJson.getString("ghId"));
+							parameter.setExchUserId(chooseJson.getString("userId"));
+							parameter.setGhId(ghId);
+							Gson gson = new Gson();
+							extra = gson.toJson(parameter);
 
-						new AlertDialog.Builder(mContext).setTitle("系统消息").setMessage(ghId + " and " + cnt)
-								.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										// TODO Auto-generated method stub
-										Intent intent = new Intent();
-										intent.putExtra("exra", hashMap);
-										((Activity) mContext).setResult(Activity.RESULT_OK, intent);
-										((Activity) mContext).finish();
-										dialog.dismiss();
-
-									}
-								}).show();
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						Intent intent = new Intent();
+						intent.putExtra("extra", extra);
+						((Activity) mContext).setResult(Activity.RESULT_OK, intent);
+						((Activity) mContext).finish();
 					}
 				});
 
@@ -235,7 +244,6 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						mPopupWindow.dismiss();
-
 					}
 				});
 
