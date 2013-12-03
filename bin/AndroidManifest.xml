@@ -177,6 +177,10 @@
             android:label="@string/title_activity_order_details__confirm_room"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name="com.findhotel.activity.HotelPhotoGalleryActivity"
+            android:label="@string/title_activity_hotel_photo_gallery" >
+        </activity>
     </application>
 
 </manifest>

@@ -36,5 +36,6 @@
     <string name="title_activity_order_details__wait_check_in">OrderDetails_WaitCheckInActivity</string>
     <string name="title_activity_order_details__checked">OrderDetails_CheckedActivity</string>
     <string name="title_activity_order_details__confirm_room">OrderDetails_ConfirmRoomActivity</string>
+    <string name="title_activity_hotel_photo_gallery">HotelPhotoGalleryActivity</string>
 
 </resources>

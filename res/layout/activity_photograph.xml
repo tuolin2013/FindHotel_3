@@ -172,7 +172,7 @@
             android:layout_marginLeft="5sp"
             android:layout_marginRight="5sp"
             android:layout_marginTop="20sp"
-            android:background="@drawable/border"
+            android:background="@drawable/card_border_round_corner"
             android:focusable="true"
             android:focusableInTouchMode="true" >
 
@@ -207,7 +207,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5sp"
             android:layout_marginRight="5sp"
-            android:layout_marginTop="50sp"
+            android:layout_marginTop="10sp"
             android:background="@drawable/custom_btn_green"
             android:text="发    表"
             android:textColor="#FFFFFF"
@@ -221,7 +221,7 @@
             android:layout_marginTop="20sp"
             android:text="*分享的视频和照片有机会获得大家的“赞”，和旅友馈赠的优惠券。\n*单个照片、视频获得2014个“赞”，找住的平台奖励200元的房费抵扣券。"
             android:textColor="#7d7d7d"
-            android:textSize="24sp" />
+            android:textSize="16sp" />
     </LinearLayout>
 
 </ScrollView>

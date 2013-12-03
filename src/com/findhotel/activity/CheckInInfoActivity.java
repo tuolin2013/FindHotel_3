@@ -1,16 +1,16 @@
 package com.findhotel.activity;
 
-import static com.findhotel.constant.Constant.WEB_SERVER_URL;
 import static com.findhotel.constant.Constant.DEBUGGER;
+import static com.findhotel.constant.Constant.WEB_SERVER_URL;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -490,6 +490,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 							Toast.makeText(mContext, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 						}
 						calculateHandler.sendEmptyMessage(1);
+						
 					}
 
 				}

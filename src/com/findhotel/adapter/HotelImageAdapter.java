@@ -3,6 +3,7 @@ package com.findhotel.adapter;
 import org.json.JSONObject;
 
 import com.findhotel.R;
+import com.findhotel.activity.HotelPhotoGalleryActivity;
 import com.findhotel.activity.PhotographActivity;
 import com.findhotel.activity.StartActivity;
 import com.findhotel.widget.SquareImageView;
@@ -53,8 +54,8 @@ public class HotelImageAdapter extends ArrayAdapter<String> {
 
 		if (getItem(position).equals("menu")) {
 			holder.imageView.setImageResource(R.drawable.icon_big_camera);
-			 FrameLayout f = (FrameLayout) convertView.findViewById(R.id.fl_container);
-			 f.setBackgroundResource(R.drawable.card_border_dashed);
+			FrameLayout f = (FrameLayout) convertView.findViewById(R.id.fl_container);
+			f.setBackgroundResource(R.drawable.card_border_dashed);
 
 			holder.imageView.setOnClickListener(new OnClickListener() {
 
@@ -71,8 +72,9 @@ public class HotelImageAdapter extends ArrayAdapter<String> {
 
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					Toast.makeText(context, getItem(position), Toast.LENGTH_LONG).show();
+					Intent intent = new Intent(context, HotelPhotoGalleryActivity.class);
+					intent.putExtra("data", extraData.toString());
+					context.startActivity(intent);
 				}
 			});
 		}
