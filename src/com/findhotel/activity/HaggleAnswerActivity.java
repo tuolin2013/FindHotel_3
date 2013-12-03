@@ -13,8 +13,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,8 +26,10 @@ import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
@@ -52,6 +57,7 @@ public class HaggleAnswerActivity extends SherlockActivity {
 	ListView mListView;
 	TextView topDescText, areaText, priceText, check_in_dateText, check_in_dayText, check_out_dateText, check_out_dayText, roomTypeText,
 			roomNumText;
+	Button payButton, refuseButton;
 	String selectId = "";
 	Context mContext = HaggleAnswerActivity.this;
 	ExecutorService executorService = Executors.newCachedThreadPool();
@@ -85,6 +91,20 @@ public class HaggleAnswerActivity extends SherlockActivity {
 		roomTypeText = (TextView) findViewById(R.id.tv_room_type);
 		roomNumText = (TextView) findViewById(R.id.tv_room_num);
 		topDescText = (TextView) findViewById(R.id.tv_top_desc);
+
+		refuseButton = (Button) findViewById(R.id.btn_refuse);
+		refuseButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				RequestParams params = new RequestParams();
+				params.put("appId", "appId");
+				params.put("orderId", getIntent().getStringExtra("orderId"));
+				executorService.execute(new RefuseRunnable(params));
+
+			}
+		});
 
 		// String testJson =
 		// "{orderId:2013405005-33433,area:西塘,price:130,startDate:2013-10-10,endDate:2013-10-11,rmType:DC,rmCnt:1,resp:[{ordId:2012020334,ghName:留香居客栈,url:www.zhaozhude.comimage,addService:增值服务},{ordId:2012020332,ghName:小桥流水旅馆,url:www.zhaozhude.comimage,addService:增值服务2},{ordId:2012020330,ghName:月圆人家,url:www.zhaozhude.comimage,addService:增值服务3}]}";
@@ -242,6 +262,88 @@ public class HaggleAnswerActivity extends SherlockActivity {
 
 	};
 
+	class RefuseRunnable implements Runnable {
+		RequestParams params;
+
+		public RefuseRunnable(RequestParams params) {
+			super();
+			this.params = params;
+		}
+
+		private Handler refuseHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				// TODO Auto-generated method stub
+				progressDialog.dismiss();
+				switch (msg.what) {
+				case 0:
+					String result = (String) msg.obj;
+					try {
+						JSONObject obj = new JSONObject(result);
+						String code = obj.getString("code");
+						if ("200".equals(code)) {
+							showAlertMessage("回绝成功！");
+						} else {
+							showAlertMessage("操作失败！");
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						showAlertMessage(e.getLocalizedMessage());
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+
+		};
+
+		@Override
+		public void run() {
+			Looper.prepare();
+
+			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/cancelBidding";
+
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+
+			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable arg0, String arg1) {
+					progressDialog.dismiss();
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg1, Toast.LENGTH_LONG).show();
+					}
+				}
+
+				@Override
+				public void onStart() {
+					if (DEBUGGER) {
+						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
+					}
+					progressDialog = ProgressDialog.show(mContext, null, "正在处理，请稍候...", true, false);
+					super.onStart();
+				}
+
+				@Override
+				public void onSuccess(final String arg0) {
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
+					refuseHandler.obtainMessage(0, -1, -1, arg0).sendToTarget();
+
+				}
+			});
+			Looper.loop();
+
+		}
+
+	}
+
 	class HanggleAnswerAdaper extends BaseAdapter {
 		JSONArray data;
 		ImageLoader mLoader;
@@ -343,4 +445,15 @@ public class HaggleAnswerActivity extends SherlockActivity {
 
 	}
 
+	private void showAlertMessage(String message) {
+		new AlertDialog.Builder(mContext).setTitle("系统消息").setMessage(message)
+				.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						dialog.dismiss();
+					}
+				}).show();
+	}
 }

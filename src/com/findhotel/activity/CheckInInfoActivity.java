@@ -352,7 +352,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 	}
 
-	void initCoupon() {
+	void initCoupon(int exchanged) {
 		JSONObject obj;
 		try {
 			obj = new JSONObject(response);
@@ -361,7 +361,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 			int limits = obj.getInt("limits");
 			final double depositRatio = obj.getDouble("depositRatio");
 			availableCoupon = coupon > limits ? limits : coupon;
-			usedCoupon = availableCoupon;
+			usedCoupon = availableCoupon + exchanged;
 			couponText.setText(availableCoupon + "张");
 			discountText.setText(coupon * 10 + "");
 			plusImage.setOnClickListener(new OnClickListener() {
@@ -392,7 +392,6 @@ public class CheckInInfoActivity extends SherlockActivity {
 					// TODO Auto-generated method stub
 					if (usedCoupon > 0) {
 						--usedCoupon;
-						couponText.setText(usedCoupon + "张");
 						couponText.setText(usedCoupon + "张");
 						int discount = usedCoupon * 10;
 						discountText.setText(discount + "");
@@ -513,7 +512,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 					cashpayText.setText(json.getString("actPrice"));
 					depositText.setText(json.getString("deposit"));
 					noteText.setText(json.getString("notes"));
-					initCoupon();
+					initCoupon(0);
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -685,7 +684,10 @@ public class CheckInInfoActivity extends SherlockActivity {
 						String code = obj.getString("code");
 
 						if ("200".equals(code)) {
-							couponText.setText(parameter.getExchCnt() + "张");
+							int exchanged = Integer.parseInt(parameter.getExchCnt());
+							initCoupon(exchanged);
+
+							showAlertMessage(parameter.getExchCnt() + "张");
 
 						} else {
 							showAlertMessage("兑换失败！");

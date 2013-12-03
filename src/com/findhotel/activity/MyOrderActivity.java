@@ -88,6 +88,8 @@ public class MyOrderActivity extends SherlockActivity {
 		String selected = (String) item.getTitle();
 		if ("¸ü¶à".equals(selected)) {
 			menu.toggle();
+		} else {
+			finish();
 		}
 		return false;
 	}
@@ -343,7 +345,7 @@ public class MyOrderActivity extends SherlockActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
 						dialog.dismiss();
-						//finish();
+						// finish();
 
 					}
 				}).show();

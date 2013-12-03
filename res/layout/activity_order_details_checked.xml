@@ -51,7 +51,6 @@
                     android:layout_height="wrap_content" >
 
                     <TextView
-                        android:id="@+id/tv_hotel_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="房型:"
@@ -60,10 +59,9 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tv_hotel_area"
+                        android:id="@+id/tv_room_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
                         android:textColor="#343434"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -74,7 +72,6 @@
                     android:layout_height="wrap_content" >
 
                     <TextView
-                        android:id="@+id/tv_hotel_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="入住:"
@@ -83,10 +80,9 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tv_hotel_area"
+                        android:id="@+id/tv_check_in_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
                         android:textColor="#343434"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -140,6 +136,7 @@
                         android:textSize="16sp" />
 
                     <TextView
+                        android:id="@+id/tv_guest"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
@@ -170,9 +167,9 @@
                         android:textSize="18sp" />
 
                     <TextView
+                        android:id="@+id/tv_contact"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2013年"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -200,9 +197,9 @@
                         android:textSize="18sp" />
 
                     <TextView
+                        android:id="@+id/tv_mobile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1间"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -245,9 +242,9 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/tv_order_total"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="180"
                     android:textSize="18sp" />
 
                 <TextView
@@ -258,9 +255,9 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/tv_order_discount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="50"
                     android:textSize="18sp" />
             </TableRow>
 
@@ -277,9 +274,9 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/tv_order_cash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100"
                     android:textSize="18sp" />
 
                 <TextView
@@ -290,9 +287,9 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/tv_order_deposit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="50"
                     android:textSize="18sp" />
             </TableRow>
         </TableLayout>
@@ -315,7 +312,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5sp"
-                android:stretchColumns="1,2" >
+                android:shrinkColumns="1"
+                android:stretchColumns="1" >
 
                 <TableRow
                     android:id="@+id/tableRow3"
@@ -324,7 +322,6 @@
                     android:gravity="center" >
 
                     <TextView
-                        android:id="@+id/textView1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="地址:"
@@ -332,15 +329,14 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/tv_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
                         android:textColor="#343434"
                         android:textSize="18sp" />
 
                     <ImageView
-                        android:id="@+id/imageView1"
+                        android:id="@+id/iv_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/icon_address" />
@@ -362,7 +358,6 @@
                     android:gravity="center" >
 
                     <TextView
-                        android:id="@+id/textView1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="电话:"
@@ -370,15 +365,14 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/tv_hotel_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
                         android:textColor="#343434"
                         android:textSize="18sp" />
 
                     <ImageView
-                        android:id="@+id/imageView1"
+                        android:id="@+id/iv_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/icon_call" />

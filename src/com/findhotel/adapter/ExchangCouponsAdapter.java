@@ -12,10 +12,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
@@ -36,7 +34,6 @@ import android.widget.LinearLayout.LayoutParams;
 
 import com.findhotel.R;
 import com.findhotel.entity.ExchangeCouponPostParameter;
-import com.findhotel.util.ListViewUtility;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -49,7 +46,6 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 	private LayoutInflater mInflater;
 	private Context mContext;
 	private JSONArray list;
-	View targetView;
 	ImageLoader mLoader;
 	DisplayImageOptions options;
 	ExecutorService executorService = Executors.newCachedThreadPool();
@@ -119,8 +115,7 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					chooseJson = (JSONObject) v.getTag();
-					targetView = v;
-					executorService.execute(new LoadMyCouponRunnable());
+					executorService.execute(new LoadMyCouponRunnable(v));
 				}
 			});
 
@@ -133,6 +128,94 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 	}
 
 	class LoadMyCouponRunnable implements Runnable {
+		View targetView;
+
+		public LoadMyCouponRunnable(View targetView) {
+			super();
+			this.targetView = targetView;
+		}
+
+		private Handler showPopupWindowHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+
+				progressDialog.dismiss();
+				switch (msg.what) {
+				case 0:
+					String result = (String) msg.obj;
+					View popupView = mInflater.inflate(R.layout.popup_window_my_coupons, null);
+					ListView mListView = (ListView) popupView.findViewById(R.id.lv_my_coupons);
+					Button exchangeButton = (Button) popupView.findViewById(R.id.btn_exchange);
+					ImageView closeImage = (ImageView) popupView.findViewById(R.id.iv_close);
+
+					final PopupWindow mPopupWindow = new PopupWindow(popupView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, true);
+					mPopupWindow.setTouchable(true);
+					mPopupWindow.setOutsideTouchable(true);
+					mPopupWindow.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.card_border));
+					try {
+						JSONObject json = new JSONObject(result);
+						JSONArray datasource = json.getJSONArray("coupon");
+						PopupWindowCouponsAdapter adapter = new PopupWindowCouponsAdapter(mContext, datasource, exchangeButton);
+						hashMap = adapter.getExchageHashMap();
+						mListView.setAdapter(adapter);
+						mPopupWindow.showAsDropDown(targetView);
+						exchangeButton.setText("∂“ªª 0 ’≈");
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					exchangeButton.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							String ghId = "", cnt = "";
+							String extra = null;
+							for (String key : hashMap.keySet()) {
+								ghId += key + ",";
+								cnt += hashMap.get(key) + ",";
+							}
+							try {
+								ExchangeCouponPostParameter parameter = new ExchangeCouponPostParameter();
+								parameter.setAppId("appId");
+								parameter.setCnt(cnt);
+								parameter.setExchCnt(chooseJson.getString("cnt"));
+								// parameter.setExchGhId(chooseJson.getString("ghId"));
+								parameter.setExchUserId(chooseJson.getString("userId"));
+								parameter.setGhId(ghId);
+								Gson gson = new Gson();
+								extra = gson.toJson(parameter);
+
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							Intent intent = new Intent();
+							intent.putExtra("extra", extra);
+							((Activity) mContext).setResult(Activity.RESULT_OK, intent);
+							((Activity) mContext).finish();
+						}
+					});
+
+					closeImage.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							mPopupWindow.dismiss();
+						}
+					});
+
+					break;
+
+				default:
+					break;
+				}
+			}
+
+		};
 
 		@Override
 		public void run() {
@@ -173,88 +256,6 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 			Looper.loop();
 		}
 	}
-
-	private Handler showPopupWindowHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-
-			progressDialog.dismiss();
-			switch (msg.what) {
-			case 0:
-				String result = (String) msg.obj;
-				View popupView = mInflater.inflate(R.layout.popup_window_my_coupons, null);
-				ListView mListView = (ListView) popupView.findViewById(R.id.lv_my_coupons);
-				Button exchangeButton = (Button) popupView.findViewById(R.id.btn_exchange);
-				ImageView closeImage = (ImageView) popupView.findViewById(R.id.iv_close);
-
-				final PopupWindow mPopupWindow = new PopupWindow(popupView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, true);
-				mPopupWindow.setTouchable(true);
-				mPopupWindow.setOutsideTouchable(true);
-				mPopupWindow.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.card_border));
-				try {
-					JSONObject json = new JSONObject(result);
-					JSONArray datasource = json.getJSONArray("coupon");
-					PopupWindowCouponsAdapter adapter = new PopupWindowCouponsAdapter(mContext, datasource, exchangeButton);
-					hashMap = adapter.getExchageHashMap();
-					mListView.setAdapter(adapter);
-					mPopupWindow.showAsDropDown(targetView);
-					exchangeButton.setText("∂“ªª 0 ’≈");
-
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				exchangeButton.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						String ghId = "", cnt = "";
-						String extra = null;
-						for (String key : hashMap.keySet()) {
-							ghId += key + ",";
-							cnt += hashMap.get(key) + ",";
-						}
-						try {
-							ExchangeCouponPostParameter parameter = new ExchangeCouponPostParameter();
-							parameter.setAppId("appId");
-							parameter.setCnt(cnt);
-							parameter.setExchCnt(chooseJson.getString("cnt"));
-							// parameter.setExchGhId(chooseJson.getString("ghId"));
-							parameter.setExchUserId(chooseJson.getString("userId"));
-							parameter.setGhId(ghId);
-							Gson gson = new Gson();
-							extra = gson.toJson(parameter);
-
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						Intent intent = new Intent();
-						intent.putExtra("extra", extra);
-						((Activity) mContext).setResult(Activity.RESULT_OK, intent);
-						((Activity) mContext).finish();
-					}
-				});
-
-				closeImage.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						mPopupWindow.dismiss();
-					}
-				});
-
-				break;
-
-			default:
-				break;
-			}
-		}
-
-	};
 
 	public final class ViewHolder {
 		public ImageView couponsImage;

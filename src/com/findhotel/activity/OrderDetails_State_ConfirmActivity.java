@@ -35,6 +35,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.findhotel.R;
+import com.findhotel.activity.OrderDetails_State_ConfirmRoomActivity.CancelOrderRunnable;
 import com.findhotel.util.ExitApplication;
 import com.findhotel.util.MyActionMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -143,8 +144,26 @@ public class OrderDetails_State_ConfirmActivity extends SherlockActivity {
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
 						if (!TextUtils.isEmpty(orderId)) {
-							executorService.execute(new CancelOrderRunnable());
+
+							new AlertDialog.Builder(mContext).setTitle("系统提示").setMessage("您确定要取消订单吗？")
+									.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											// TODO Auto-generated method stub
+											dialog.dismiss();
+
+										}
+									}).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											// TODO Auto-generated method stub
+											executorService.execute(new CancelOrderRunnable());
+										}
+									}).show();
 						}
+
 					}
 				});
 
