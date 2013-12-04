@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -393,6 +394,8 @@ public class OrderDetails_State_WaitCheckInActivity extends SherlockActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
 						dialog.dismiss();
+						Intent intent = new Intent();
+						setResult(Activity.RESULT_OK);
 						finish();
 
 					}

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +30,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.renderscript.Sampler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Display;
@@ -342,25 +344,24 @@ public class RoomListActivity extends SherlockActivity {
 			gridView.setAdapter(avatarAdapter);
 
 			JSONArray hotelImages = hotel.getJSONArray("imgs");
-			List<String> bigImages = new ArrayList<String>();
-			List<String> smallImages = new ArrayList<String>();
+			JSONArray bigJsonArray = new JSONArray();
+			JSONArray smallJsonArray = new JSONArray();
 			for (int i = 0; i < 3; i++) {
 				JSONObject temp = hotelImages.getJSONObject(i);
-				bigImages.add(temp.getString("mUrl"));
+				bigJsonArray.put(temp);
+
 			}
 			for (int i = 2; i < hotelImages.length(); i++) {
 				JSONObject temp = hotelImages.getJSONObject(i);
-				smallImages.add(temp.getString("mUrl"));
+				smallJsonArray.put(temp);
 			}
-			smallImages.add("menu");
-			String[] temp = new String[] {};
-			String urls[] = bigImages.toArray(temp);
-			String urls_2[] = smallImages.toArray(temp);
+			JSONObject menu = new JSONObject("{mUrl:menu,srcId:menu}");
+			smallJsonArray.put(smallJsonArray.length(), menu);
 
-			HotelImageAdapter adapter = new HotelImageAdapter(RoomListActivity.this, R.id.imageView1, urls, hotel);
+			HotelImageAdapter adapter = new HotelImageAdapter(RoomListActivity.this, bigJsonArray, hotel);
 			((GridView) findViewById(R.id.gv_big_photo)).setAdapter(adapter);
 
-			HotelImageAdapter adapter2 = new HotelImageAdapter(RoomListActivity.this, R.id.imageView1, urls_2, hotel);
+			HotelImageAdapter adapter2 = new HotelImageAdapter(RoomListActivity.this, smallJsonArray, hotel);
 			((GridView) findViewById(R.id.gv_small_photo)).setAdapter(adapter2);
 			adapter2.notifyDataSetChanged();
 

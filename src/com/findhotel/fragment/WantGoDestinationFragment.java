@@ -65,7 +65,7 @@ public class WantGoDestinationFragment extends Fragment {
 
 	void initView(View view) {
 		mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.pull_to_refresh_listview_area);
-		loadTestData();
+		loadData();
 		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 			@Override
 			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
@@ -90,7 +90,7 @@ public class WantGoDestinationFragment extends Fragment {
 
 	}
 
-	void loadTestData() {
+	void loadData() {
 		// try {
 		// JSONObject json = new JSONObject(testJson);
 		// JSONArray datasource = json.getJSONArray("items");

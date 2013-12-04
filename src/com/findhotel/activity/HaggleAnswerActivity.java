@@ -6,6 +6,7 @@ import static com.findhotel.constant.Constant.WEB_SERVER_URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,7 +59,7 @@ public class HaggleAnswerActivity extends SherlockActivity {
 	TextView topDescText, areaText, priceText, check_in_dateText, check_in_dayText, check_out_dateText, check_out_dayText, roomTypeText,
 			roomNumText;
 	Button payButton, refuseButton;
-	String selectId = "";
+	String selectId;
 	Context mContext = HaggleAnswerActivity.this;
 	ExecutorService executorService = Executors.newCachedThreadPool();
 	ProgressDialog progressDialog;
@@ -400,12 +401,10 @@ public class HaggleAnswerActivity extends SherlockActivity {
 			try {
 				JSONObject item = data.getJSONObject(position);
 				String orderId = item.getString("ordId");
-				holder.radioButton.setTag(orderId);
-				if (position == 0) {
+				if (orderId.equals(selectId)) {
 					holder.radioButton.setChecked(true);
-					selectId = orderId;
 				}
-
+				holder.radioButton.setTag(orderId);
 				holder.radioButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 					@Override
@@ -444,6 +443,7 @@ public class HaggleAnswerActivity extends SherlockActivity {
 		}
 
 	}
+	
 
 	private void showAlertMessage(String message) {
 		new AlertDialog.Builder(mContext).setTitle("系统消息").setMessage(message)

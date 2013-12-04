@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.findhotel.R;
 import com.findhotel.activity.HaggleAnswerActivity;
+import com.findhotel.activity.MyOrderActivity;
 import com.findhotel.activity.OrderDetails_State_CheckedActivity;
 import com.findhotel.activity.OrderDetails_State_ConfirmActivity;
 import com.findhotel.activity.OrderDetails_State_ConfirmRoomActivity;
@@ -142,7 +143,7 @@ public class MyOrderAdapter extends BaseAdapter {
 							// TODO Auto-generated method stub
 							Intent intent = new Intent(mContext, HaggleAnswerActivity.class);
 							intent.putExtra("orderId", orderId);
-							((Activity) mContext).startActivity(intent);
+							((Activity) mContext).startActivityForResult(intent, MyOrderActivity.REQUST_ORDER_DETAILS);
 						}
 					});
 				}
@@ -169,7 +170,7 @@ public class MyOrderAdapter extends BaseAdapter {
 					public void onClick(View v) {
 						Intent intent = new Intent(mContext, OrderDetails_State_WaitCheckInActivity.class);
 						intent.putExtra("orderId", orderId);
-						((Activity) mContext).startActivity(intent);
+						((Activity) mContext).startActivityForResult(intent, MyOrderActivity.REQUST_ORDER_DETAILS);
 
 					}
 				});
@@ -203,6 +204,7 @@ public class MyOrderAdapter extends BaseAdapter {
 
 		@Override
 		public void run() {
+
 			Looper.prepare();
 			String webUrl = WEB_SERVER_URL + "/zzd/book/v1/viewOrder1";
 			AsyncHttpClient client = new AsyncHttpClient();
@@ -240,7 +242,7 @@ public class MyOrderAdapter extends BaseAdapter {
 							intent = new Intent(mContext, OrderDetails_State_ConfirmRoomActivity.class);
 						}
 						intent.putExtra("data", arg0);
-						((Activity) mContext).startActivity(intent);
+						((Activity) mContext).startActivityForResult(intent, MyOrderActivity.REQUST_ORDER_DETAILS);
 
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block

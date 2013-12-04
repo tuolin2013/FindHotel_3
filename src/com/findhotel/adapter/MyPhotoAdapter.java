@@ -71,8 +71,12 @@ public class MyPhotoAdapter extends BaseAdapter {
 		holder.shareImage = (ImageView) convertView.findViewById(R.id.iv_share);
 		holder.loveImage = (ImageView) convertView.findViewById(R.id.iv_love);
 		holder.photeImage = (ScaleImageView) convertView.findViewById(R.id.siv_my_photo);
+		// convertView.setTag(holder);
+		// } else {
+		// holder = (ViewHolder) convertView.getTag();
+		// }
 		final LinearLayout shareLayout = (LinearLayout) convertView.findViewById(R.id.ll_share);
-		;
+
 		try {
 			JSONObject jsonObject = list.getJSONObject(position);
 			holder.descText.setText(jsonObject.getString("notes"));
@@ -121,10 +125,7 @@ public class MyPhotoAdapter extends BaseAdapter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// convertView.setTag(holder);
-		// } else {
-		// holder = (ViewHolder) convertView.getTag();
-		// }
+
 		return convertView;
 	}
 

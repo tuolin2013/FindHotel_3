@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -38,9 +39,12 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.findhotel.R;
+import com.findhotel.activity.CheckInInfoActivity.ExchangeCouponRunnable;
 import com.findhotel.adapter.MyOrderAdapter;
+import com.findhotel.entity.ExchangeCouponPostParameter;
 import com.findhotel.util.ExitApplication;
 import com.findhotel.util.MyActionMenu;
+import com.google.gson.Gson;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
@@ -62,6 +66,7 @@ public class MyOrderActivity extends SherlockActivity {
 	String orderType = "QRZ";
 	int page_no = 1;
 	int page_count = 0;
+	public final static int REQUST_ORDER_DETAILS = 1000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +97,23 @@ public class MyOrderActivity extends SherlockActivity {
 			finish();
 		}
 		return false;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		if (resultCode != Activity.RESULT_OK)
+			return;
+		switch (requestCode) {
+		case REQUST_ORDER_DETAILS:
+			executorService.execute(new LoadOrderRunnable(orderType, "1"));
+			break;
+
+		default:
+			break;
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	void initView() {

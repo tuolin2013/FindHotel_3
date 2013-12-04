@@ -11,9 +11,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.integer;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
@@ -136,6 +139,7 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 		}
 
 		private Handler showPopupWindowHandler = new Handler() {
+			int limit = 0, total = 0;
 
 			@Override
 			public void handleMessage(Message msg) {
@@ -160,6 +164,7 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 						hashMap = adapter.getExchageHashMap();
 						mListView.setAdapter(adapter);
 						mPopupWindow.showAsDropDown(targetView);
+
 						exchangeButton.setText("兑换 0 张");
 
 					} catch (JSONException e) {
@@ -176,26 +181,43 @@ public class ExchangCouponsAdapter extends BaseAdapter {
 							for (String key : hashMap.keySet()) {
 								ghId += key + ",";
 								cnt += hashMap.get(key) + ",";
+								total += Integer.parseInt(hashMap.get(key));
 							}
 							try {
 								ExchangeCouponPostParameter parameter = new ExchangeCouponPostParameter();
 								parameter.setAppId("appId");
 								parameter.setCnt(cnt);
 								parameter.setExchCnt(chooseJson.getString("cnt"));
+								limit = chooseJson.getInt("cnt");
 								// parameter.setExchGhId(chooseJson.getString("ghId"));
 								parameter.setExchUserId(chooseJson.getString("userId"));
 								parameter.setGhId(ghId);
 								Gson gson = new Gson();
 								extra = gson.toJson(parameter);
+								if (total <= limit) {
+									mPopupWindow.dismiss();
+									Intent intent = new Intent();
+									intent.putExtra("extra", extra);
+									((Activity) mContext).setResult(Activity.RESULT_OK, intent);
+									((Activity) mContext).finish();
+								} else {
+									new AlertDialog.Builder(mContext).setTitle("系统消息").setMessage("兑换的优惠券大于可兑换的数量！")
+											.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+
+												@Override
+												public void onClick(DialogInterface dialog, int which) {
+													// TODO Auto-generated method stub
+													dialog.dismiss();
+
+												}
+											}).show();
+								}
 
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							Intent intent = new Intent();
-							intent.putExtra("extra", extra);
-							((Activity) mContext).setResult(Activity.RESULT_OK, intent);
-							((Activity) mContext).finish();
+
 						}
 					});
 

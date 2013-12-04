@@ -1,17 +1,12 @@
 package com.findhotel.adapter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.R.integer;
 import android.content.Context;
 import android.content.Intent;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,7 +21,6 @@ import com.findhotel.R;
 import com.findhotel.activity.RoomListActivity;
 import com.findhotel.widget.MyGridView;
 import com.origamilabs.library.loader.ImageLoader;
-import com.readystatesoftware.viewbadger.BadgeView;
 
 public class HotelAdapter extends BaseAdapter {
 
@@ -111,25 +105,23 @@ public class HotelAdapter extends BaseAdapter {
 				}
 
 				JSONArray hotelImages = item.getJSONArray("imgs");
-				List<String> bigImages = new ArrayList<String>();
-				List<String> smallImages = new ArrayList<String>();
+				JSONArray bigJsonArray = new JSONArray();
+				JSONArray smallJsonArray = new JSONArray();
 				for (int i = 0; i < 3; i++) {
 					JSONObject temp = hotelImages.getJSONObject(i);
-					bigImages.add(temp.getString("mUrl"));
+					bigJsonArray.put(temp);
+
 				}
 				for (int i = 2; i < hotelImages.length(); i++) {
 					JSONObject temp = hotelImages.getJSONObject(i);
-					smallImages.add(temp.getString("mUrl"));
+					smallJsonArray.put(temp);
 				}
-				smallImages.add("menu");
-				String[] temp = new String[] {};
-				String urls[] = bigImages.toArray(temp);
-				String urls_2[] = smallImages.toArray(temp);
-
-				HotelImageAdapter adapter = new HotelImageAdapter(mContext, R.id.imageView1, urls, item);
+				JSONObject menu = new JSONObject("{mUrl:menu,srcId:menu}");
+				smallJsonArray.put(smallJsonArray.length(), menu);
+				HotelImageAdapter adapter = new HotelImageAdapter(mContext, bigJsonArray, item);
 				holder.bigView.setAdapter(adapter);
 
-				HotelImageAdapter adapter2 = new HotelImageAdapter(mContext, R.id.imageView1, urls_2, item);
+				HotelImageAdapter adapter2 = new HotelImageAdapter(mContext, smallJsonArray, item);
 				holder.smallView.setAdapter(adapter2);
 
 				JSONArray coupons = item.getJSONArray("coupon");

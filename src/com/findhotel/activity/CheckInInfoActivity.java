@@ -122,13 +122,12 @@ public class CheckInInfoActivity extends SherlockActivity {
 			try {
 				JSONObject obj = new JSONObject(getIntent().getStringExtra("hotel"));
 				parameter.setExchGhId(obj.getString("ghId"));
+				executorService.execute(new ExchangeCouponRunnable(parameter));
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			executorService.execute(new ExchangeCouponRunnable(parameter));
 
 			break;
 
@@ -352,8 +351,8 @@ public class CheckInInfoActivity extends SherlockActivity {
 
 	}
 
-	void initCoupon(int exchanged) {
-		JSONObject obj;
+	void initCoupon(JSONObject obj) {
+
 		try {
 			obj = new JSONObject(response);
 			int coupon = obj.getInt("coupons");
@@ -361,53 +360,76 @@ public class CheckInInfoActivity extends SherlockActivity {
 			int limits = obj.getInt("limits");
 			final double depositRatio = obj.getDouble("depositRatio");
 			availableCoupon = coupon > limits ? limits : coupon;
-			usedCoupon = availableCoupon + exchanged;
+			usedCoupon = availableCoupon;
 			couponText.setText(availableCoupon + "张");
-			discountText.setText(coupon * 10 + "");
-			plusImage.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					if (usedCoupon < availableCoupon) {
-						++usedCoupon;
-						couponText.setText(usedCoupon + "张");
-						int discount = usedCoupon * 10;
-						discountText.setText(discount + "");
-						int total = Integer.parseInt(orderTotalText.getText().toString());
-						int deposit = (int) ((total - discount) * depositRatio * 0.01);
-						int cash = total - discount - deposit;
-						cashpayText.setText(cash + "");
-						depositText.setText(deposit + "");
-
-					}
-
-				}
-			});
-
-			minusImage.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					if (usedCoupon > 0) {
-						--usedCoupon;
-						couponText.setText(usedCoupon + "张");
-						int discount = usedCoupon * 10;
-						discountText.setText(discount + "");
-						int total = Integer.parseInt(orderTotalText.getText().toString());
-						int deposit = (int) ((total - discount) * depositRatio * 0.01);
-						int cash = total - discount - deposit;
-						depositText.setText(deposit + "");
-						cashpayText.setText(cash + "");
-					}
-
-				}
-			});
+			discountText.setText(availableCoupon * 10 + "");
+			setCouponTools(depositRatio, availableCoupon);
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+	}
+
+	private void setCouponTools(final double depositRatio, final int availableCoupon) {
+		plusImage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (usedCoupon < availableCoupon) {
+					++usedCoupon;
+					couponText.setText(usedCoupon + "张");
+					int discount = usedCoupon * 10;
+					discountText.setText(discount + "");
+					int total = Integer.parseInt(orderTotalText.getText().toString());
+					int deposit = (int) ((total - discount) * depositRatio * 0.01);
+					int cash = total - discount - deposit;
+					cashpayText.setText(cash + "");
+					depositText.setText(deposit + "");
+
+				}
+
+			}
+		});
+
+		minusImage.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (usedCoupon > 0) {
+					--usedCoupon;
+					couponText.setText(usedCoupon + "张");
+					int discount = usedCoupon * 10;
+					discountText.setText(discount + "");
+					int total = Integer.parseInt(orderTotalText.getText().toString());
+					int deposit = (int) ((total - discount) * depositRatio * 0.01);
+					int cash = total - discount - deposit;
+					depositText.setText(deposit + "");
+					cashpayText.setText(cash + "");
+				}
+
+			}
+		});
+	}
+
+	void refreshCoupon(int exchanged) {
+		int total = exchanged + usedCoupon;
+		usedCoupon = total;
+		if (!TextUtils.isEmpty(response)) {
+			try {
+				JSONObject obj = new JSONObject(response);
+				final double depositRatio = obj.getDouble("depositRatio");
+				couponText.setText(total + "张");
+				discountText.setText(total * 10 + "");
+				setCouponTools(depositRatio, total);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -490,7 +512,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 							Toast.makeText(mContext, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 						}
 						calculateHandler.sendEmptyMessage(1);
-						
+
 					}
 
 				}
@@ -513,7 +535,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 					cashpayText.setText(json.getString("actPrice"));
 					depositText.setText(json.getString("deposit"));
 					noteText.setText(json.getString("notes"));
-					initCoupon(0);
+					initCoupon(json);
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -634,6 +656,38 @@ public class CheckInInfoActivity extends SherlockActivity {
 		ExchangeCouponPostParameter parameter;
 		RequestParams params;
 
+		private Handler exchangeHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case 0:
+
+					String result = (String) msg.obj;
+					try {
+						JSONObject json = new JSONObject(result);
+						String code = json.getString("code");
+						if ("200".equals(code)) {
+							int exchanged = Integer.parseInt(parameter.getExchCnt());
+							refreshCoupon(exchanged);
+							showAlertMessage(parameter.getExchCnt() + "张");
+
+						} else {
+							showAlertMessage("兑换失败！");
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+
+		};
+
 		public ExchangeCouponRunnable(ExchangeCouponPostParameter parameter) {
 			super();
 			this.parameter = parameter;
@@ -679,24 +733,7 @@ public class CheckInInfoActivity extends SherlockActivity {
 					if (DEBUGGER) {
 						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
 					}
-
-					try {
-						JSONObject obj = new JSONObject(arg0);
-						String code = obj.getString("code");
-
-						if ("200".equals(code)) {
-							int exchanged = Integer.parseInt(parameter.getExchCnt());
-							initCoupon(exchanged);
-
-							showAlertMessage(parameter.getExchCnt() + "张");
-
-						} else {
-							showAlertMessage("兑换失败！");
-						}
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					exchangeHandler.obtainMessage(0, -1, -1, arg0).sendToTarget();
 
 				}
 			});
