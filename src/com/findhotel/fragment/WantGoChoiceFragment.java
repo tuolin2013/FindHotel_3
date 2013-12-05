@@ -65,13 +65,13 @@ public class WantGoChoiceFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		mView = inflater.inflate(R.layout.fragment_want_go_destination, container, false);
+		mView = inflater.inflate(R.layout.fragment_want_go_choice, container, false);
 		initView(mView);
 		return mView;
 	}
 
 	void initView(View view) {
-		mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.pull_to_refresh_listview_area);
+		mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.pull_to_refresh_listview_choice);
 		loadData();
 		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 			@Override

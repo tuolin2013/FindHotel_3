@@ -122,7 +122,7 @@ public class HotelPhotoGalleryActivity extends SherlockActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(mContext, HotelPhotoGalleryActivity.class);
+				Intent intent = new Intent(mContext, RoomListActivity.class);
 				intent.putExtra("json", getIntent().getStringExtra("data"));
 				startActivity(intent);
 

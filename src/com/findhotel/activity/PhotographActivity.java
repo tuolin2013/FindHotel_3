@@ -1,17 +1,23 @@
 package com.findhotel.activity;
 
+import static com.findhotel.constant.Constant.DEBUGGER;
 import static com.findhotel.constant.Constant.PHOTO_SAVE_PATH;
+import static com.findhotel.constant.Constant.WEB_SERVER_URL;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.R.integer;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -24,6 +30,9 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Video.Thumbnails;
 import android.text.Editable;
@@ -54,6 +63,11 @@ import com.findhotel.media.MyCamera;
 import com.findhotel.util.ExitApplication;
 import com.findhotel.util.MyActionMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class PhotographActivity extends SherlockActivity {
 	SlidingMenu menu;
@@ -74,6 +88,10 @@ public class PhotographActivity extends SherlockActivity {
 	List<ImageView> imageViews;
 	List<ImageView> videoViews;
 
+	ExecutorService executorService = Executors.newCachedThreadPool();
+	ProgressDialog progressDialog;
+	Context mContext = PhotographActivity.this;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setTheme(R.style.Theme_Styled);
@@ -83,6 +101,7 @@ public class PhotographActivity extends SherlockActivity {
 		menu = new MyActionMenu(PhotographActivity.this).initView();
 		extra = getIntent().getStringExtra("data");
 		initView();
+		executorService.execute(new LoadDataRunnable());
 	}
 
 	@Override
@@ -433,4 +452,112 @@ public class PhotographActivity extends SherlockActivity {
 		return intent;
 	}
 
+	class LoadDataRunnable implements Runnable {
+		RequestParams params = new RequestParams();
+		ImageLoader mLoader = ImageLoader.getInstance();
+		DisplayImageOptions options = new DisplayImageOptions.Builder().showStubImage(R.drawable.ic_stub)
+				.showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory().cacheOnDisc()
+				.bitmapConfig(Bitmap.Config.RGB_565).build();
+		private Handler loadHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				progressDialog.dismiss();
+				switch (msg.what) {
+				case 0:
+					String result = (String) msg.obj;
+					try {
+						JSONObject json = new JSONObject(result);
+						JSONArray images = json.getJSONArray("img");
+						JSONArray videos = json.getJSONArray("video");
+
+						for (ImageView iv : imageViews) {
+							for (int i = 0; i < images.length(); i++) {
+								JSONObject temp = images.getJSONObject(i);
+								String src = temp.getString("mUrl");
+								String srcId = temp.getString("srcId");
+								iv.setTag(srcId);
+								mLoader.displayImage(src, iv);
+							}
+						}
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					break;
+
+				default:
+					break;
+				}
+			}
+
+		};
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			Looper.prepare();
+			String webUrl = WEB_SERVER_URL + "/zzd/view/v1/uploadPhotos";
+			try {
+				JSONObject jsonObject = new JSONObject(extra);
+				String ghId = jsonObject.getString("ghId");
+				params.put("appId", "appId");
+				params.put("ghId", ghId);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.setTimeout(1000 * 60);
+			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable arg0, String arg1) {
+					progressDialog.dismiss();
+					if (DEBUGGER) {
+						showAlertMessage(arg1);
+					}
+
+				}
+
+				@Override
+				public void onStart() {
+					progressDialog = ProgressDialog.show(mContext, null, "正在加载，请稍候...", true, false);
+					if (DEBUGGER) {
+						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
+					}
+					super.onStart();
+				}
+
+				@Override
+				public void onSuccess(final String arg0) {
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
+					loadHandler.obtainMessage(0, -1, -1, arg0).sendToTarget();
+
+				}
+			});
+			Looper.loop();
+
+		}
+
+	}
+
+	private void showAlertMessage(String message) {
+		new AlertDialog.Builder(mContext).setTitle("系统消息").setMessage(message)
+				.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						dialog.dismiss();
+
+					}
+				}).show();
+	}
 }

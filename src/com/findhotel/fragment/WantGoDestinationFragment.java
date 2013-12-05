@@ -38,7 +38,7 @@ import com.loopj.android.http.RequestParams;
 
 public class WantGoDestinationFragment extends Fragment {
 	View mView;
-	PullToRefreshListView mPullRefreshListView;
+	ListView mListView;
 	String testJson = "{dataV:2013091019,count:2,items:[{theme:热点,data:[{val:深圳,name:深圳},{val:香港,name:香港},{val:阳朔,name:阳朔},{val:三亚,name:三亚},{val:丽江,name:丽江}]},{theme:海边,data:[{val:红海湾,name:红海湾},{val:沙扒湾,name:沙扒湾},{val:北海,name:北海},{val:闸坡,name:闸坡}]}]}";
 	AreaAdapter mAdapter;
 	JSONArray datasource;
@@ -64,30 +64,8 @@ public class WantGoDestinationFragment extends Fragment {
 	}
 
 	void initView(View view) {
-		mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.pull_to_refresh_listview_area);
+		mListView = (ListView) view.findViewById(R.id.lv_area);
 		loadData();
-		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
-			@Override
-			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-				String label = DateUtils.formatDateTime(getActivity(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-						| DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
-
-				// Update the LastUpdatedLabel
-				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
-
-				// Do work to refresh the list here.
-				// new GetDataTask().execute();
-			}
-		});
-		// Add an end-of-list listener
-		mPullRefreshListView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
-
-			@Override
-			public void onLastItemVisible() {
-				Toast.makeText(getActivity(), "End of List!", Toast.LENGTH_SHORT).show();
-			}
-		});
-
 	}
 
 	void loadData() {
@@ -111,8 +89,8 @@ public class WantGoDestinationFragment extends Fragment {
 			try {
 				JSONArray data = cacheData.getJSONArray("items");
 				mAdapter = new AreaAdapter(getActivity(), data);
-				mPullRefreshListView.setAdapter(mAdapter);
-				ListViewUtility.setListViewHeightBasedOnChildren(mPullRefreshListView.getRefreshableView());
+				mListView.setAdapter(mAdapter);
+				// ListViewUtility.setListViewHeightBasedOnChildren(mPullRefreshListView.getRefreshableView());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -171,49 +149,6 @@ public class WantGoDestinationFragment extends Fragment {
 		}
 	}
 
-	private class GetDataTask extends AsyncTask<Integer, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Integer... params) {
-
-			final Integer page = params[0];
-
-			RequestParams params1 = new RequestParams();
-			params1.put("appId", "value");
-			params1.put("pg", page.toString());
-
-			AsyncHttpClient client = new AsyncHttpClient();
-			client.post(getActivity(), request_url, params1, new AsyncHttpResponseHandler() {
-				@Override
-				public void onSuccess(final String arg0) {
-					try {
-						JSONObject jsObj = new JSONObject(arg0);
-						JSONArray temp = jsObj.getJSONArray("items");
-						if (page == 1) {// refresh
-							datasource = temp;
-						} else {
-							for (int i = 0; i < temp.length(); i++) {
-								datasource.put(temp.getJSONObject(i));
-							}
-						}
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			});
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void v) {
-			// mAdapter = new ChoiceAdapter(getActivity(), v);
-			mAdapter.notifyDataSetChanged();
-			// Call onRefreshComplete when the list has been refreshed.
-			mPullRefreshListView.onRefreshComplete();
-			super.onPostExecute(v);
-		}
-	}
 
 	private Handler myHandler = new Handler() {
 
@@ -223,7 +158,7 @@ public class WantGoDestinationFragment extends Fragment {
 			case 0:
 				datasource = (JSONArray) msg.obj;
 				mAdapter = new AreaAdapter(getActivity(), datasource);
-				mPullRefreshListView.setAdapter(mAdapter);
+				mListView.setAdapter(mAdapter);
 				break;
 
 			case 1:

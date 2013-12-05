@@ -13,19 +13,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <ImageView
-                android:id="@+id/iv_icon"
-                android:layout_width="wrap_content"
+            <com.origamilabs.library.views.ScaleImageView
+                android:id="@+id/siv_icon"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_launcher" />
+                android:layout_margin="10dp"
+                android:src="@drawable/ic_empty" />
 
             <TextView
                 android:id="@+id/tv_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|bottom"
-                android:text="TextView" />
+                android:layout_gravity="center|bottom" />
         </FrameLayout>
     </LinearLayout>
 
@@ -39,7 +38,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="TextView"
             android:textColor="@color/blue"
             android:textSize="24sp"
             android:textStyle="bold" />

@@ -67,8 +67,8 @@
 
                     <ImageView
                         android:id="@+id/iv_photo_1"
-                        android:layout_width="80sp"
-                        android:layout_height="80sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_margin="5sp"
                         android:src="@drawable/icon_s_camera" />
                 </LinearLayout>
@@ -84,8 +84,8 @@
 
                     <ImageView
                         android:id="@+id/iv_photo_2"
-                        android:layout_width="80sp"
-                        android:layout_height="80sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_margin="5sp"
                         android:src="@drawable/icon_s_camera" />
                 </LinearLayout>
@@ -101,8 +101,8 @@
 
                     <ImageView
                         android:id="@+id/iv_photo_3"
-                        android:layout_width="80sp"
-                        android:layout_height="80sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_margin="5sp"
                         android:src="@drawable/icon_s_camera" />
                 </LinearLayout>
@@ -124,8 +124,8 @@
 
                     <ImageView
                         android:id="@+id/iv_video_1"
-                        android:layout_width="80sp"
-                        android:layout_height="80sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_margin="5sp"
                         android:src="@drawable/icon_s_video" />
                 </LinearLayout>
@@ -141,8 +141,8 @@
 
                     <ImageView
                         android:id="@+id/iv_video_2"
-                        android:layout_width="80sp"
-                        android:layout_height="80sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_margin="5sp"
                         android:src="@drawable/icon_s_video" />
                 </LinearLayout>
@@ -158,8 +158,8 @@
 
                     <ImageView
                         android:id="@+id/iv_video_3"
-                        android:layout_width="80sp"
-                        android:layout_height="80sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_margin="5sp"
                         android:src="@drawable/icon_s_video" />
                 </LinearLayout>

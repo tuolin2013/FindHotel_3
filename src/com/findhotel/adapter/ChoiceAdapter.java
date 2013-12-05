@@ -20,6 +20,7 @@ import com.findhotel.R;
 import com.findhotel.activity.HotelListActivity;
 import com.findhotel.widget.FloatView;
 import com.origamilabs.library.loader.ImageLoader;
+import com.origamilabs.library.views.ScaleImageView;
 
 public class ChoiceAdapter extends BaseAdapter {
 
@@ -65,14 +66,14 @@ public class ChoiceAdapter extends BaseAdapter {
 		// if (convertView == null) {
 		holder = new ViewHolder();
 		convertView = mInflater.inflate(R.layout.list_item_choice, null);
-		holder.iconImage = (ImageView) convertView.findViewById(R.id.iv_icon);
+		holder.iconImage = (ScaleImageView) convertView.findViewById(R.id.siv_icon);
 		holder.titleText = (TextView) convertView.findViewById(R.id.tv_title);
 		holder.countText = (TextView) convertView.findViewById(R.id.tv_count);
 
 		try {
 			JSONObject item = list.getJSONObject(position);
-			holder.titleText.setText(item.getString("title"));
-			holder.countText.setText(item.getString("hotelCnt"));
+//			holder.titleText.setText(item.getString("title"));
+//			holder.countText.setText(item.getString("hotelCnt"));
 			convertView.setTag(item.getString("ctg"));
 			convertView.setOnClickListener(new OnClickListener() {
 
@@ -99,7 +100,7 @@ public class ChoiceAdapter extends BaseAdapter {
 	}
 
 	public final class ViewHolder {
-		public ImageView iconImage;
+		public ScaleImageView iconImage;
 		public TextView titleText;
 		public TextView countText;
 
