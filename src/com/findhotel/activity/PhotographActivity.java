@@ -5,6 +5,7 @@ import static com.findhotel.constant.Constant.PHOTO_SAVE_PATH;
 import static com.findhotel.constant.Constant.WEB_SERVER_URL;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +37,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Video.Thumbnails;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -73,7 +75,7 @@ public class PhotographActivity extends SherlockActivity {
 	SlidingMenu menu;
 	TextView areaText, hotelText, countText;
 	EditText speechText;
-	Button submitButton;
+	Button publishButton;
 	String extra;
 	ImageView currentImageView, currentVideoView;
 	/* 用来标识请求照相功能的activity */
@@ -91,6 +93,10 @@ public class PhotographActivity extends SherlockActivity {
 	ExecutorService executorService = Executors.newCachedThreadPool();
 	ProgressDialog progressDialog;
 	Context mContext = PhotographActivity.this;
+	ImageLoader mLoader = ImageLoader.getInstance();
+	DisplayImageOptions options = new DisplayImageOptions.Builder().showStubImage(R.drawable.ic_stub)
+			.showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory().cacheOnDisc()
+			.bitmapConfig(Bitmap.Config.RGB_565).build();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +222,52 @@ public class PhotographActivity extends SherlockActivity {
 			}
 		});
 
+		publishButton = (Button) findViewById(R.id.btn_publish);
+		publishButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				String srcIds = getSrcId();
+				String note = speechText.getText().toString();
+				if (TextUtils.isEmpty(srcIds)) {
+					showAlertMessage("没有内容发表！");
+
+				} else {
+					RequestParams params = new RequestParams();
+					params.put("appId", "appId");
+					params.put("srcId", srcIds);
+					params.put("notes", note);
+					executorService.execute(new PublishRunnable(params));
+				}
+
+			}
+		});
+
+	}
+
+	private String getSrcId() {
+		String ids = "";
+		for (ImageView v : imageViews) {
+			Object tag = v.getTag();
+			if (tag != null) {
+				String id = tag.toString();
+				if (!TextUtils.isEmpty(id)) {
+					ids += id + ",";
+				}
+			}
+
+		}
+		for (ImageView v : videoViews) {
+			Object tag = v.getTag();
+			if (tag != null) {
+				String id = tag.toString();
+				if (!TextUtils.isEmpty(id)) {
+					ids += id + ",";
+				}
+			}
+		}
+		return ids;
+
 	}
 
 	@Override
@@ -225,13 +277,32 @@ public class PhotographActivity extends SherlockActivity {
 		switch (requestCode) {
 		case PHOTO_PICKED_WITH_DATA: {// 调用Gallery返回的
 			final Bitmap photo = data.getParcelableExtra("data");
-			MyCamera.saveBitmap(PHOTO_DIR.getPath() + "/" + getPhotoFileName(), photo);
+			String fileName = PHOTO_DIR.getPath() + "/" + getPhotoFileName();
+			MyCamera.saveBitmap(fileName, photo);
 
 			// cust_ImageView.setImageBitmap(bitmap);
 			// base64 = MyCamera.parseBase64(bitmap);
 			// 下面就是显示照片了
 			System.out.println(photo);
 			currentImageView.setImageBitmap(photo);
+			try {
+				File myFile = new File(fileName);
+				JSONObject jsonObject = new JSONObject(extra);
+				String ghId = jsonObject.getString("ghId");
+				RequestParams params = new RequestParams();
+				params.put("appId", "appId");
+				params.put("ghId", ghId);
+				params.put("fileName", myFile);
+				executorService.execute(new UploadImageRunnable(params, currentImageView));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				showAlertMessage(e.getLocalizedMessage());
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				showAlertMessage(e.getLocalizedMessage());
+			}
 
 			break;
 		}
@@ -247,13 +318,13 @@ public class PhotographActivity extends SherlockActivity {
 				} else {
 					Cursor c = getContentResolver().query(uri, new String[] { MediaStore.MediaColumns.DATA }, null, null, null);// 根据返回的URI，查找数据库，获取视频的路径
 					if (c != null && c.moveToFirst()) {
-						String filPath = c.getString(0);
-						Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(filPath, Thumbnails.MICRO_KIND);
+						String filePath = c.getString(0);
+						Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(filePath, Thumbnails.MICRO_KIND);
 						Bitmap watermark = BitmapFactory.decodeResource(getResources(), R.drawable.icon_video);
 						Bitmap scaleBitmap = MyCamera.lessenBitmap(watermark, 36, 36);
 						Bitmap newBitmap = MyCamera.createWatermark(bitmap, scaleBitmap);
 						currentVideoView.setImageBitmap(newBitmap);
-						Log.d("test", filPath);
+						Log.d("test", filePath);
 					}
 
 				}
@@ -454,10 +525,7 @@ public class PhotographActivity extends SherlockActivity {
 
 	class LoadDataRunnable implements Runnable {
 		RequestParams params = new RequestParams();
-		ImageLoader mLoader = ImageLoader.getInstance();
-		DisplayImageOptions options = new DisplayImageOptions.Builder().showStubImage(R.drawable.ic_stub)
-				.showImageForEmptyUri(R.drawable.ic_empty).showImageOnFail(R.drawable.ic_error).cacheInMemory().cacheOnDisc()
-				.bitmapConfig(Bitmap.Config.RGB_565).build();
+
 		private Handler loadHandler = new Handler() {
 
 			@Override
@@ -544,6 +612,255 @@ public class PhotographActivity extends SherlockActivity {
 			});
 			Looper.loop();
 
+		}
+
+	}
+
+	class UploadImageRunnable implements Runnable {
+		RequestParams params;
+		ImageView targetView;
+
+		public UploadImageRunnable(RequestParams params, ImageView targetView) {
+			super();
+			this.params = params;
+			this.targetView = targetView;
+		}
+
+		private Handler uploadHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case 0:
+					String result = (String) msg.obj;
+					try {
+						JSONObject json = new JSONObject(result);
+						String code = json.getString("code");
+						if ("200".equals(code)) {
+							String mUrl = json.getString("mUrl");
+							String srcId = json.getString("srcId");
+							targetView.setTag(srcId);
+
+						} else {
+							showAlertMessage("上传失败");
+						}
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+
+		};
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			Looper.prepare();
+			String webUrl = WEB_SERVER_URL + "/zzd/view/v1/uploadMyPhoto";
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.setTimeout(1000 * 60);
+			// client.setBasicAuth("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable arg0, String arg1) {
+					progressDialog.dismiss();
+					if (DEBUGGER) {
+						showAlertMessage(arg1);
+					}
+
+				}
+
+				@Override
+				public void onStart() {
+					progressDialog = ProgressDialog.show(mContext, null, "正在上传，请稍候...", true, false);
+					if (DEBUGGER) {
+						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
+					}
+					super.onStart();
+				}
+
+				@Override
+				public void onSuccess(final String arg0) {
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
+					uploadHandler.obtainMessage(0, -1, -1, arg0).sendToTarget();
+
+				}
+			});
+			Looper.loop();
+		}
+
+	}
+
+	class UploadVideoRunnable implements Runnable {
+		RequestParams params;
+		ImageView targetView;
+
+		public UploadVideoRunnable(RequestParams params, ImageView targetView) {
+			super();
+			this.params = params;
+			this.targetView = targetView;
+		}
+
+		private Handler uploadHandler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case 0:
+					String result = (String) msg.obj;
+					try {
+						JSONObject json = new JSONObject(result);
+						String code = json.getString("code");
+						if ("200".equals(code)) {
+							String mUrl = json.getString("mUrl");
+							String srcId = json.getString("srcId");
+							targetView.setTag(srcId);
+
+						} else {
+							showAlertMessage("上传失败");
+						}
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+
+		};
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			Looper.prepare();
+			String webUrl = WEB_SERVER_URL + "/zzd/view/v1/uploadMyVideo";
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.setTimeout(1000 * 60);
+			// client.setBasicAuth("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable arg0, String arg1) {
+					progressDialog.dismiss();
+					if (DEBUGGER) {
+						showAlertMessage(arg1);
+					}
+
+				}
+
+				@Override
+				public void onStart() {
+					progressDialog = ProgressDialog.show(mContext, null, "正在上传，请稍候...", true, false);
+					if (DEBUGGER) {
+						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
+					}
+					super.onStart();
+				}
+
+				@Override
+				public void onSuccess(final String arg0) {
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
+					uploadHandler.obtainMessage(0, -1, -1, arg0).sendToTarget();
+
+				}
+			});
+			Looper.loop();
+		}
+
+	}
+
+	class PublishRunnable implements Runnable {
+		RequestParams params;
+
+		public PublishRunnable(RequestParams params) {
+			super();
+			this.params = params;
+		}
+
+		private Handler publishHandler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case 0:
+					String result = (String) msg.obj;
+					try {
+						JSONObject json = new JSONObject(result);
+						String code = json.getString("code");
+						if ("200".equals(code)) {
+
+						} else {
+							showAlertMessage("发表失败");
+						}
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+
+		};
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			Looper.prepare();
+			String webUrl = WEB_SERVER_URL + "/zzd/view/v1/showMe";
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.setTimeout(1000 * 60);
+			// client.setBasicAuth("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.addHeader("Authorization", "Basic MTM3OTgwNDAyMzk6ZWM4YTcxMWYtNGI0OS0xMWUzLTg3MTUtMDAxNjNlMDIxMzQz");
+			client.post(mContext, webUrl, params, new AsyncHttpResponseHandler() {
+
+				@Override
+				public void onFailure(Throwable arg0, String arg1) {
+					progressDialog.dismiss();
+					if (DEBUGGER) {
+						showAlertMessage(arg1);
+					}
+
+				}
+
+				@Override
+				public void onStart() {
+					progressDialog = ProgressDialog.show(mContext, null, "正在处理，请稍候...", true, false);
+					if (DEBUGGER) {
+						Toast.makeText(mContext, params.toString(), Toast.LENGTH_LONG).show();
+					}
+					super.onStart();
+				}
+
+				@Override
+				public void onSuccess(final String arg0) {
+					if (DEBUGGER) {
+						Toast.makeText(mContext, arg0, Toast.LENGTH_LONG).show();
+					}
+					publishHandler.obtainMessage(0, -1, -1, arg0).sendToTarget();
+
+				}
+			});
+			Looper.loop();
 		}
 
 	}
